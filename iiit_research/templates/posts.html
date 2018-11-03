@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+{% for post in posts %}
+<img class="rounded-circle" src="{{ url_for('static', filename='profile_pics/'+ post.author.image_file) }}" alt="profile picture" style="height:50px; width:50px;">
+<h1>{{ post.title }}</h1>
+Posted by <strong>{{ post.author.username }}</strong> on <small>{{ post.date_posted.strftime('%Y-%m-%d') }}</small> 
+<p>{{ post.content }}</p>
+{% endfor %}
+{% endblock content %}
