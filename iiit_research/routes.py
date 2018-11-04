@@ -6,7 +6,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 from iiit_research import app, db, bcrypt
 from iiit_research.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
-from iiit_research.models import User, Post
+from iiit_research.models import User, Post, Subscription
 
 
 @app.route("/")
@@ -107,3 +107,20 @@ def new_post():
         flash('Your post has been created!', 'success')
         return redirect(url_for('home'))
     return render_template('create_post.html', title='New Post', form=form)
+
+
+@app.route("/user/<username>")
+def user_profile(username):
+    """ Displays user's public profile """
+    user = User.query.filter_by(username=username).first()
+
+    # TODO: optimize join
+    query = db.session.query(User.username, User.name)
+    join_query = query.join(Subscription, User.id == Subscription.follower)
+    followers = join_query.filter(Subscription.followee == user.id).all()
+
+    query = db.session.query(User.username, User.name)
+    join_query = query.join(Subscription, User.id == Subscription.followee)
+    following = join_query.filter(Subscription.follower == user.id).all()
+
+    return render_template('profile.html', user=user, followers=followers, following=following)

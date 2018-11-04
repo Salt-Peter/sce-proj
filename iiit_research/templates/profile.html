@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<img src="{{ url_for('static', filename='profile_pics/'+ user.image_file ) }}" alt=""
+     class="img-thumbnail rounded-circle account-img float-left"
+     style="height:200px; width: 200px;">
+<h3>Name: {{ user.name }}</h3>
+<h3>Username: {{ user.username }}</h3>
+<h3>Email id: {{ user.email }}</h3>
+
+Followers
+<ul>
+    {% for username, name in followers %}
+        <li><a href="{{ url_for('user_profile',username=username) }}">{{ name }}</a></li>
+    {% endfor %}
+</ul>
+
+Following
+<ul>
+    {% for username, name in following %}
+        <li><a href="{{ url_for('user_profile',username=username) }}">{{ name }}</a></li>
+    {% endfor %}
+</ul>
+</body>
+</html>
