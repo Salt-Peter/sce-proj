@@ -1,0 +1,6 @@
+<img src="{{ url_for('static', filename='profile_pics/'+ user.image_file ) }}" alt=""
+     class="img-thumbnail rounded-circle account-img float-left"
+     style="height:200px; width: 200px;">
+<h3>Name: {{ user.name }}</h3>
+<h3>Username: {{ user.username }}</h3>
+<h3>Email id: {{ user.email }}</h3>

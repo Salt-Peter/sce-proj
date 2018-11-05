@@ -1,0 +1,7 @@
+Posts by user:-
+{#Gets a lists of posts created by the user whose profile is being viewed#}
+<ul>
+    {% for post in posts %}
+        <li><a href="{{ url_for('post_detail',post_id=post.id) }}">{{ post.title }}</a></li>
+    {% endfor %}
+</ul>
