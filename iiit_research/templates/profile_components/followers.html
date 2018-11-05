@@ -1,14 +1,19 @@
-<div id="menu1" class="container tab-pane fade"><br>
-      <ul>
-         {% for username, name in followers %}
-                 <div class="card" style="width:250px;height: 350px">
-                     <img class="card-img-top" src="{{ url_for('static', filename='profile_pics/'+ user.image_file ) }}" alt="Card image" style="width:100%">
-                     <div class="card-body">
-                         <p class="card-text">{{ name }}</p>
-                         <a href="{{ url_for('public_profile',username=username) }}" class="btn btn-primary">See Profile</a>
-                     </div>
-                 </div>
+<div id="menu1" class="container tab-pane fade">
+      <div class="table-responsive-sm">
+          <table class="table">
+              <tbody>
+              {% for username, name in followers %}
+                  <tr>
+                  <td class="col-lg-2"><img src="{{ url_for('static', filename='profile_pics/'+ user.image_file ) }}" alt=""
+                 class="img-thumbnail rounded-circle account-img float-left"
+                 style="height:70px; width: 70px;"></td>
+                  <td class="col-lg-2"><a href="{{ url_for('public_profile',username=username) }}" >{{ name }}</a></td>
+                  <td class="=col-lg-8"></td>
+                   status
+                  </tr>
 
-         {% endfor %}
-      </ul>
-    </div>
+              {% endfor %}
+          </tbody>
+          </table>
+      </div>
+</div>

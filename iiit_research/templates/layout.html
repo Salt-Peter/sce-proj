@@ -18,24 +18,40 @@
   </head>
   <body>
     <!-- Navigation Bar controller -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <a class="navbar-brand" href="#">Research @ IIIT</a>
-        <div class="navbar-nav mr-auto">
-          <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
-          <a class="nav-item nav-link" href="{{ url_for('post') }}">Trending</a>
-          <a class="nav-item nav-link" href="{{ url_for('post') }}">Search</a>
-          <a class="nav-item nav-link" href="{{ url_for('new_post') }}">New Post</a>
-        </div>
-        <div class="navbar-nav ml-auto">
-          {% if current_user.is_authenticated %}
-          <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
-          <a class="nav-item nav-link" href="{{ url_for('account') }}">Account</a>
-          {% else %}
-          <a class="nav-item nav-link" href="{{ url_for('logout') }}">Login</a>
-          <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
-          {% endif %}
-        </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li><a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a></li>
+                    <li><a class="nav-item nav-link" href="{{ url_for('post') }}">Trending</a></li>
+                    <li><a class="nav-item nav-link" href="{{ url_for('post') }}">Search</a></li>
+                    <li><a class="nav-item nav-link" href="{{ url_for('new_post') }}">New Post</a></li>
+
+                </ul>
+                <div class="navbar-nav ml-auto">
+                    <ul class="nav-item dropdown ml-auto">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            My Account
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink" >
+                            {% if current_user.is_authenticated %}
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('account') }}">Profile</a></li>
+                            {% else %}
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Login</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('register') }}">Register</a></li>
+                            {% endif %}
+                        </div>
+                    </ul>
+                </div>
+
+            </div>
     </nav>
+    <div class="container" style="padding-bottom: 50px"></div>
     <!-- Body controller -->
     <div class="container">
       <!-- <div class="jumbotron"> -->
@@ -58,31 +74,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   </body>
-  <footer class="page-footer font-small bg-dark pt-4 bottom">
-
-    <!-- Footer Elements -->
-    <div class="container">
-
-      <!-- Call to action -->
-      <ul class="list-unstyled list-inline text-center py-2 text-light">
-        <!-- <li class="list-inline-item">
-          <h5 class="mb-1">Register for free</h5>
-        </li> -->
-        <li class="list-inline-item">
-          <a href="#!" class="btn btn-outline-light btn-rounded" style="border-radius: 22.5px">Sign up!</a>
-        </li>
-      </ul>
-      <!-- Call to action -->
-
-    </div>
-    <!-- Footer Elements -->
-
-    <!-- Copyright -->
-    <!-- <div class="footer-copyright text-center py-3">© 2018 Copyright:
-      <a href="https://mdbootstrap.com/bootstrap-tutorial/"> MDBootstrap.com</a>
-    </div> -->
-    <!-- Copyright -->
-
-  </footer>
-  <!-- Footer -->
 </html>
