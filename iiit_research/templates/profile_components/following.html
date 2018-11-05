@@ -1,6 +1,7 @@
-Following:-
-<ul>
-    {% for username, name in following %}
-        <li><a href="{{ url_for('public_profile',username=username) }}">{{ name }}</a></li>
-    {% endfor %}
-</ul>
+<div id="menu2" class="container tab-pane fade"><br>
+    <ul>
+        {% for username, name in following %}
+            <li><a href="{{ url_for('public_profile',username=username) }}">{{ name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
