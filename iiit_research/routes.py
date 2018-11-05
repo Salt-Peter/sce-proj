@@ -110,7 +110,7 @@ def new_post():
 
 
 @app.route("/user/<username>")
-def user_profile(username):
+def public_profile(username):
     """ Displays user's public profile """
     user = User.query.filter_by(username=username).first()
 
