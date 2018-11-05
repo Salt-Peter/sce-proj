@@ -1,0 +1,16 @@
+{#
+follower == current user in session,
+followee == user whose profile page is open
+#}
+{% if current_user.is_authenticated %}
+    {% if current_user.id != user.id %}
+        {% if is_following %}
+            <a href="{{ url_for('follow_action', user_id=user.id, action='unfollow') }}">
+                Unfollow {{ user.name }}
+            </a>
+        {% else %}
+            <a href="{{ url_for('follow_action', user_id=user.id, action='follow') }}">
+                Follow {{ user.name }} </a>
+        {% endif %}
+    {% endif %}
+{% endif %}
