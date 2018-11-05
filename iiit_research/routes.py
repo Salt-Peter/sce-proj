@@ -122,6 +122,10 @@ def public_profile(username):
     """ Displays user's public profile """
     user = User.query.filter_by(username=username).first()
 
+    if not user:
+        from flask import abort
+        abort(404)
+
     # TODO: optimize join
     query = db.session.query(User.username, User.name)
     join_query = query.join(Subscription, User.id == Subscription.follower)
