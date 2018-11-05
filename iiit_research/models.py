@@ -24,6 +24,23 @@ class User(db.Model, UserMixin):
         return f"User('{self.username}','{self.email}', '{self.profile_pic}')"
 
 
+class Lab(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.Text)
+    image = db.Column(db.String(20))
+
+
+class LabMembers(db.Model):
+    lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), primary_key=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True, nullable=False)
+
+
+class LabAdmin(db.Model):
+    lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), primary_key=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True, nullable=False)
+
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -32,8 +49,7 @@ class Post(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     likes = db.relationship('Like', backref='post', lazy=True)
     like_count = db.Column(db.Integer, default=0)
-
-    # lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), nullable=True)
+    lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), nullable=True)
 
     def __repr__(self):
         return f"Post('{self.title}','{self.created_at}','{self.author_id}')"
@@ -57,3 +73,15 @@ class Subscription(db.Model):
 class Like(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), primary_key=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True, nullable=False)
+
+
+class Interest(db.Model):
+    """Possible areas of interest user can choose from"""
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False)
+
+
+class UserInterests(db.Model):
+    """A mapping between user and area of interests"""
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True, nullable=False)
+    interest_id = db.Column(db.Integer, db.ForeignKey('interest.id'), primary_key=True, nullable=False)
