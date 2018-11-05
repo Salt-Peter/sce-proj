@@ -8,6 +8,7 @@ from iiit_research.models import User
 
 
 class RegistrationForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=2, max=30)])
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
