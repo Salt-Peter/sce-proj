@@ -152,13 +152,12 @@ def public_profile(username):
 @app.route('/follow/<user_id>/<action>')
 @login_required
 def follow_action(user_id, action):
-    # user = User.query.filter_by(id=user_id).first_or_404()
     if action == 'follow':
         row = Subscription(follower=current_user.id, followee=user_id)
         db.session.add(row)
         db.session.commit()
     if action == 'unfollow':
-        row = Subscription.query.filter_by(follower=1, followee=2).first()
+        row = Subscription.query.filter_by(follower=current_user.id, followee=user_id).first_or_404()
         db.session.delete(row)
         db.session.commit()
 
