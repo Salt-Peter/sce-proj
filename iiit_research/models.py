@@ -26,13 +26,16 @@ class User(db.Model, UserMixin):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     likes = db.relationship('Like', backref='post', lazy=True)
+    like_count = db.Column(db.Integer, default=0)
+
+    # lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), nullable=True)
 
     def __repr__(self):
-        return f"Post('{self.title}','{self.date_posted}')"
+        return f"Post('{self.title}','{self.created_at}','{self.author_id}')"
 
 
 class Subscription(db.Model):
