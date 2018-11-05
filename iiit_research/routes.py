@@ -91,7 +91,7 @@ def account():
     if form.validate_on_submit():
         if form.picture.data:
             picture_file = save_pic(form.picture.data)
-            current_user.image_file = picture_file
+            current_user.profile_pic = picture_file
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
@@ -100,8 +100,8 @@ def account():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', title='Account', image_file=image_file, form=form)
+    profile_pic = url_for('static', filename='profile_pics/' + current_user.profile_pic)
+    return render_template('account.html', title='Account', profile_pic=profile_pic, form=form)
 
 
 @app.route("/post/new", methods=['GET', 'POST'])
@@ -152,13 +152,12 @@ def public_profile(username):
 @app.route('/follow/<user_id>/<action>')
 @login_required
 def follow_action(user_id, action):
-    # user = User.query.filter_by(id=user_id).first_or_404()
     if action == 'follow':
         row = Subscription(follower=current_user.id, followee=user_id)
         db.session.add(row)
         db.session.commit()
     if action == 'unfollow':
-        row = Subscription.query.filter_by(follower=1, followee=2).first()
+        row = Subscription.query.filter_by(follower=current_user.id, followee=user_id).first_or_404()
         db.session.delete(row)
         db.session.commit()
 
