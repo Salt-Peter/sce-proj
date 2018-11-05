@@ -135,4 +135,31 @@ def public_profile(username):
     join_query = query.join(Subscription, User.id == Subscription.followee)
     following = join_query.filter(Subscription.follower == user.id).all()
 
-    return render_template('profile.html', user=user, followers=followers, following=following)
+    is_following = False  # specifies whether currently logged in user follows this user
+    if current_user.is_authenticated:
+        from sqlalchemy import and_
+        is_following = db.session.query(
+            db.exists().where(
+                and_(Subscription.follower == current_user.id,
+                     Subscription.followee == user.id))).scalar()
+
+    return render_template('profile.html',
+                           user=user,
+                           followers=followers, following=following,
+                           is_following=is_following)
+
+
+@app.route('/follow/<user_id>/<action>')
+@login_required
+def follow_action(user_id, action):
+    # user = User.query.filter_by(id=user_id).first_or_404()
+    if action == 'follow':
+        row = Subscription(follower=current_user.id, followee=user_id)
+        db.session.add(row)
+        db.session.commit()
+    if action == 'unfollow':
+        row = Subscription.query.filter_by(follower=1, followee=2).first()
+        db.session.delete(row)
+        db.session.commit()
+
+    return redirect(request.referrer)
