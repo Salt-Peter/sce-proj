@@ -26,6 +26,14 @@ def post():
     return render_template('posts.html', posts=posts, title='Posts')
 
 
+@app.route("/posts/<post_id>")
+def post_detail(post_id):
+    """Displays a single post."""
+    # TODO: change to use slug instead of id
+    post = Post.query.get_or_404(post_id)
+    return render_template('post_detail.html', post=post, title=post.title)
+
+
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
