@@ -149,7 +149,7 @@ def public_profile(username):
                            is_following=is_following)
 
 
-@app.route('/follow/<user_id>/<action>')
+@app.route('/follow_action/<user_id>/<action>')
 @login_required
 def follow_action(user_id, action):
     if action == 'follow':
