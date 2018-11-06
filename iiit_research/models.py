@@ -11,6 +11,15 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+# http://flask-sqlalchemy.pocoo.org/2.3/models/#many-to-many-relationships
+# A mapping between user and area of interests
+UserInterests = db.Table(
+    'user_interests',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'), primary_key=True)
+)
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
@@ -20,6 +29,9 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     posts = db.relationship('Post', backref='author', lazy=True)
     user_type = db.Column(db.String(10), nullable=False, default='student')
+
+    interests = db.relationship('Interest', secondary=UserInterests, lazy='subquery',
+                                backref=db.backref('users', lazy=True))
 
     def like_post(self, post):
         if not self.has_liked_post(post):
@@ -102,13 +114,3 @@ class Interest(db.Model):
     """Possible areas of interest user can choose from"""
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
-
-
-class UserInterests(db.Model):
-    """A mapping between user and area of interests"""
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    interest_id = db.Column(db.Integer, db.ForeignKey('interest.id'), nullable=False)
-    __table_args__ = (
-        UniqueConstraint('user_id', 'interest_id', name='user_interest_unique'),
-    )
