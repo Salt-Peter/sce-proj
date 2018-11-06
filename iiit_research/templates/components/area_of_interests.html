@@ -1,0 +1,4 @@
+<p>Area of interests</p>
+{% for aoi in area_of_interests %}
+    <input type="checkbox" name="aoi" value="{{ aoi.id }}"> {{ aoi.name }}<br>
+{% endfor %}

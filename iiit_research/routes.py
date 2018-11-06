@@ -6,7 +6,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 from iiit_research import app, db, bcrypt
 from iiit_research.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
-from iiit_research.models import User, Post, Subscription
+from iiit_research.models import User, Post, Subscription, Interest
 
 
 @app.route("/")
@@ -41,14 +41,24 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(name=form.name.data, username=form.username.data, email=form.email.data, password=hashed_password)
+
+        interests = []
+        for i in request.form.getlist('aoi'):
+            interests.append(Interest.query.get(i))
+
+        user = User(name=form.name.data, username=form.username.data,
+                    email=form.email.data, password=hashed_password,
+                    interests=interests, user_type=form.user_type.data)
+
         db.session.add(user)
         db.session.commit()
         flash(f'Your account is created! You can login Now.', 'success')
         return redirect(url_for('login'))
     # else:
     #     flash(f'Wrong information!', 'danger')
-    return render_template('register.html', title='Register', form=form)
+    # interests = db.session.query(Interest.name).all()
+    interests = Interest.query.all()
+    return render_template('register.html', title='Register', form=form, area_of_interests=interests)
 
 
 @app.route("/login", methods=['GET', 'POST'])

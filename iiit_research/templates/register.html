@@ -74,6 +74,15 @@
                 {% endif %}
                 <!-- {{ form.confirm_password(class="form-control form-control-lg") }} -->
             </div>
+            <div class="form-group">
+                    {% include "components/area_of_interests.html" %}
+                </div>
+                <div class="form-group">
+                    Select user type:-<br>
+                    <input type="radio" name="user_type" value="student" checked>Student
+                    <br/>
+                    <input type="radio" name="user_type" value="professor">Professor
+                </div>
         </fieldset>
         <div>
             {{ form.submit(class="btn btn-outline-info") }}
