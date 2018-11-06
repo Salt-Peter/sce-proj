@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from flask_login import UserMixin
+from sqlalchemy import CheckConstraint, UniqueConstraint
 
 from iiit_research import db, login_manager
 
@@ -48,13 +49,15 @@ class Lab(db.Model):
 
 
 class LabMembers(db.Model):
-    lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), primary_key=True, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
 class LabAdmin(db.Model):
-    lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), primary_key=True, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
 class Post(db.Model):
@@ -71,24 +74,28 @@ class Post(db.Model):
         return f"Post('{self.title}','{self.created_at}','{self.author_id}')"
 
 
+# follower = subscriber followee = publisher
 class Subscription(db.Model):
-    # follower = subscriber
-    follower = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True, nullable=False)
-    # followee = publisher
-    followee = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    follower = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    from sqlalchemy import CheckConstraint
+    followee = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     # FIXME: Perhaps this constraint should be handled in application logic
     __table_args__ = (
         # Make sure a user can not follow himself.
         CheckConstraint(follower != followee, name='check_follower_not_followee'),
+        UniqueConstraint('follower', 'followee', name='follower_followee_unique'),
     )
 
 
 class Like(db.Model):
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), primary_key=True, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    __table_args__ = (
+        UniqueConstraint('post_id', 'user_id', name='post_user_like_unique'),
+    )
 
 
 class Interest(db.Model):
@@ -99,5 +106,9 @@ class Interest(db.Model):
 
 class UserInterests(db.Model):
     """A mapping between user and area of interests"""
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True, nullable=False)
-    interest_id = db.Column(db.Integer, db.ForeignKey('interest.id'), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    interest_id = db.Column(db.Integer, db.ForeignKey('interest.id'), nullable=False)
+    __table_args__ = (
+        UniqueConstraint('user_id', 'interest_id', name='user_interest_unique'),
+    )
