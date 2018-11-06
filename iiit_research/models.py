@@ -20,6 +20,22 @@ class User(db.Model, UserMixin):
     posts = db.relationship('Post', backref='author', lazy=True)
     user_type = db.Column(db.String(10), nullable=False, default='student')
 
+    def like_post(self, post):
+        if not self.has_liked_post(post):
+            like = Like(user_id=self.id, post_id=post.id)
+            db.session.add(like)
+
+    def unlike_post(self, post):
+        if self.has_liked_post(post):
+            Like.query.filter_by(
+                user_id=self.id,
+                post_id=post.id).delete()
+
+    def has_liked_post(self, post):
+        return Like.query.filter(
+            Like.user_id == self.id,
+            Like.post_id == post.id).count() > 0
+
     def __repr__(self):
         return f"User('{self.username}','{self.email}', '{self.profile_pic}')"
 

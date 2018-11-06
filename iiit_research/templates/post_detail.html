@@ -9,4 +9,12 @@ Posted by
 on
 <small>{{ post.created_at.strftime('%Y-%m-%d') }}</small>
 <p>{{ post.content }}</p>
-<p>Likes: {{ post.like_count }}</p>
+<p>{{ post.like_count }} likes</p>
+
+<div>
+    {% if current_user.has_liked_post(post) %}
+        <a href="{{ url_for('like_action', post_id=post.id, action='unlike') }}">Unlike</a>
+    {% else %}
+        <a href="{{ url_for('like_action', post_id=post.id, action='like') }}">Like</a>
+    {% endif %}
+</div>

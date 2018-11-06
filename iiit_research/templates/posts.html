@@ -11,5 +11,15 @@
         <small>{{ post.created_at.strftime('%Y-%m-%d') }}</small>
         {# Show only first 500 characters of the post #}
         <p>{{ post.content[0:500] }}...</p>
+        <p>{{ post.likes|length }} likes</p>
+
+        <div>
+            {% if current_user.has_liked_post(post) %}
+                <a href="{{ url_for('like_action', post_id=post.id, action='unlike') }}">Unlike</a>
+            {% else %}
+                <a href="{{ url_for('like_action', post_id=post.id, action='like') }}">Like</a>
+            {% endif %}
+        </div>
+        <hr/>
     {% endfor %}
 {% endblock content %}

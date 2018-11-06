@@ -162,3 +162,19 @@ def follow_action(user_id, action):
         db.session.commit()
 
     return redirect(request.referrer)
+
+
+@app.route('/like/<post_id>/<action>')
+@login_required
+def like_action(post_id, action):
+    post = Post.query.get_or_404(post_id)
+    if action == 'like':
+        current_user.like_post(post)
+        post.like_count += 1
+        db.session.commit()
+
+    if action == 'unlike':
+        current_user.unlike_post(post)
+        post.like_count -= 1
+        db.session.commit()
+    return redirect(request.referrer)
