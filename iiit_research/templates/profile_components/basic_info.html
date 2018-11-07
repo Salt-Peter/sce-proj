@@ -1,33 +1,18 @@
-<div id="home" class="container tab-pane active"><br>
-    <div class="row">
-        <div class="col-md-4">
-          <div class="content-section">
-            <p class='text-muted'>
-              <ul class="list-group">
-                <li class="list-group-item list-group-item-light" style="padding-left: 50px">
-                    <img src="{{ url_for('static', filename='profile_pics/'+ user.profile_pic ) }}" alt=""
-                         class="img-thumbnail rounded-circle account-img float-left"
-                         style="height:150px; width: 150px;">
-                </li>
-                <li class="list-group-item list-group-item-light">
-                    {% include 'profile_components/btn_follow.html' %}
-                </li>
-              </ul>
-            </p>
-          </div>
-        </div>
-
-        <div class="content-section col-md-8">
-            <span>Name: {{ user.name }}</span><br>
-            <span>Username: {{ user.username }}</span><br>
-            <span>Email id: {{ user.email }}</span><br>
-            <span>Area Of Interest:  {% for interest in user.interests %}
+<div class="media">
+    <ul class="list-group" style="text-align: center">
+        <li class="list-group-item list-group-item-light" style="padding-left: 60px">
+            <img src="{{ url_for('static', filename='profile_pics/'+ user.profile_pic ) }}" alt="" class="img-thumbnail rounded-circle account-img float-left" style="height:150px; width: 150px;">
+        </li>
+        <div class="media-body">
+            <li class="list-group-item list-group-item-light" >Name: {{user.name}}</li>
+            <li class="list-group-item list-group-item-light">UserName: {{user.username}}</li>
+            <li class="list-group-item list-group-item-light">Email: {{user.email}}</li>
+            <li class="list-group-item list-group-item-light"><span>Area Of Interest:  {% for interest in user.interests %}
                 <span class="badge badge-primary">{{ interest.name }}</span>
                {% endfor %}
-            </span>
+            </span></li>
         </div>
-    </div>
+    </ul>
 </div>
-
 
 

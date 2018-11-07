@@ -2,34 +2,40 @@
 {% block content %}
     <div class="container">
         <br>
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" data-toggle="tab" href="#home">Overview</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#menu1">Followers</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#menu2">Following</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#menu3">Posts</a>
-            </li>
-        </ul>
+        <div class="row">
+            <div class="col-md-4">
+                {% include "profile_components/basic_info.html" %}
+            </div>
+            <div class = "col-md-8">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#menu1">Followers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#menu2">Following</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#menu3">Posts</a>
+                    </li>
+                </ul>
 
-        <!-- Tab panes -->
-        <div class="tab-content">
-            {% include "profile_components/basic_info.html" %}
-
-            {% include "profile_components/followers.html" %}
-
-            {% include "profile_components/following.html" %}
-
-{#            {% include "profile_components/posts.html" %}#}
+                <!-- Tab panes -->
+                <div class="tab-content">
 
 
+                    {% include "profile_components/followers.html" %}
+
+                    {% include "profile_components/following.html" %}
+
+                    {# {% include "profile_components/posts.html" %} #}
+
+
+
+                </div>
+            </div>
         </div>
+
     </div>
 {% endblock content %}
 
