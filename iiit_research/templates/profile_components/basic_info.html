@@ -1,11 +1,23 @@
 <div id="home" class="container tab-pane active"><br>
     <div class="row">
-        <div class="col-3">
-            <img src="{{ url_for('static', filename='profile_pics/'+ user.profile_pic ) }}" alt=""
-                 class="img-thumbnail rounded-circle account-img float-left"
-                 style="height:150px; width: 150px;">
+        <div class="col-md-4">
+          <div class="content-section">
+            <p class='text-muted'>
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light" style="padding-left: 50px">
+                    <img src="{{ url_for('static', filename='profile_pics/'+ user.profile_pic ) }}" alt=""
+                         class="img-thumbnail rounded-circle account-img float-left"
+                         style="height:150px; width: 150px;">
+                </li>
+                <li class="list-group-item list-group-item-light">
+                    {% include 'profile_components/btn_follow.html' %}
+                </li>
+              </ul>
+            </p>
+          </div>
         </div>
-        <div class="col-9"><p style="width: 50px"></p>
+
+        <div class="content-section col-md-8">
             <span>Name: {{ user.name }}</span><br>
             <span>Username: {{ user.username }}</span><br>
             <span>Email id: {{ user.email }}</span><br>
@@ -14,6 +26,8 @@
                {% endfor %}
             </span>
         </div>
-        {% include 'profile_components/btn_follow.html' %}
     </div>
 </div>
+
+
+

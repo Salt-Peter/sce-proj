@@ -103,13 +103,21 @@ def account():
             picture_file = save_pic(form.picture.data)
             current_user.profile_pic = picture_file
         current_user.username = form.username.data
-        current_user.email = form.email.data
+        current_user.name = form.name.data
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        current_user.password = hashed_password
+        interests = []
+        for i in request.form.getlist('aoi'):
+            interests.append(Interest.query.get(i))
+        current_user.interests = interests
         db.session.commit()
         flash('Your information has been updated!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
-        form.email.data = current_user.email
+        form.name.data = current_user.name
+        form.password.data = ''
+        form.confirm_password.data=''
     profile_pic = url_for('static', filename='profile_pics/' + current_user.profile_pic)
     return render_template('account.html', title='Account', profile_pic=profile_pic, form=form)
 

@@ -1,16 +1,21 @@
 {% extends "layout.html" %}
 {% block content %}
     {% for post in posts %}
+        <article class="media content-section">
+        <div class="media-body">
+
         <img class="rounded-circle" src="{{ url_for('static', filename='profile_pics/'+ post.author.profile_pic) }}"
              alt="profile picture" style="height:50px; width:50px;">
         <h1>
-            <a href="{{ url_for('post_detail',post_id=post.id) }}">{{ post.title }}</a>
+            <a class="article-title" href="{{ url_for('post_detail',post_id=post.id) }}">{{ post.title }}</a>
         </h1>
+        <div class="article-metadata">
         Posted by <strong>{{ post.author.name }}</strong>
         on
-        <small>{{ post.created_at.strftime('%Y-%m-%d') }}</small>
+            <span class="label label-info"><small>{{ post.created_at.strftime('%Y-%m-%d') }}</small></span>
+        </div>
         {# Show only first 500 characters of the post #}
-        <p>{{ post.content[0:500] }}...</p>
+        <p class="article-content">{{ post.content[0:500] }}...</p>
         <p>{{ post.likes|length }} likes</p>
 
         <div>
@@ -20,6 +25,7 @@
                 <a href="{{ url_for('like_action', post_id=post.id, action='like') }}">Like</a>
             {% endif %}
         </div>
-        <hr/>
+        </div>
+        </article>
     {% endfor %}
 {% endblock content %}

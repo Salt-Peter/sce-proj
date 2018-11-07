@@ -1,16 +1,19 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="container" style="padding-top: 50px">
-        <img src="{{ url_for('static', filename='profile_pics/'+ post.author.profile_pic) }}"
+        <article class="media content-section">
+        <div class="media-body">
+        <img class="rounded-circle" src="{{ url_for('static', filename='profile_pics/'+ post.author.profile_pic) }}"
              alt="profile picture"
              style="height:50px; width:50px;">
         <h1 class="font-italic">{{ post.title }}</h1>
         Posted by
+        <div class="article-metadata">
         <strong>
             <a href="{{ url_for('public_profile',username=post.author.username ) }}">{{ post.author.name }}</a>
         </strong>
         on
         <small>{{ post.created_at.strftime('%Y-%m-%d') }}</small>
+        </div>
         <p class="font-weight-light" class="text-justify">{{ post.content }}</p>
 
         <p>{{ post.like_count }} likes</p>
@@ -22,5 +25,6 @@
                 <a href="{{ url_for('like_action', post_id=post.id, action='like') }}">Like</a>
             {% endif %}
         </div>
-    </div>
+        </div>
+        </article>
 {% endblock content %}
