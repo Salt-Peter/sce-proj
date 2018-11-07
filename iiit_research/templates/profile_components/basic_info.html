@@ -8,7 +8,13 @@
         <div class="col-9"><p style="width: 50px"></p>
             <span>Name: {{ user.name }}</span><br>
             <span>Username: {{ user.username }}</span><br>
-            <span>Email id: {{ user.email }}</span></div>
+            <span>Email id: {{ user.email }}</span><br>
+            <span>Area Of Interest:  {% for interest in user.interests %}
+                {{ interest }}
+               {% endfor %}
+            </span>
+
+        </div>
         
         {% include 'profile_components/btn_follow.html' %}
     </div>
