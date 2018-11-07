@@ -10,12 +10,10 @@
             <span>Username: {{ user.username }}</span><br>
             <span>Email id: {{ user.email }}</span><br>
             <span>Area Of Interest:  {% for interest in user.interests %}
-                {{ interest }}
+                <span class="badge badge-primary">{{ interest.name }}</span>
                {% endfor %}
             </span>
-
         </div>
-        
         {% include 'profile_components/btn_follow.html' %}
     </div>
 </div>
