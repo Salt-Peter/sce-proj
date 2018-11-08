@@ -12,7 +12,7 @@
         <div class="article-metadata">
         Posted by <strong>{{ post.author.name }}</strong>
         on
-            <span class="label label-info"><small>{{ post.created_at.strftime('%Y-%m-%d') }}</small></span>
+            <small><span class="label label-info">{{ post.created_at.strftime('%Y-%m-%d') }}</span></small>
         </div>
         {# Show only first 500 characters of the post #}
         <p class="article-content">{{ post.content[0:500] }}...</p>

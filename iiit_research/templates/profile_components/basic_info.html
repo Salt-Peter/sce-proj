@@ -7,7 +7,8 @@
             <li class="list-group-item list-group-item-light" >Name: {{user.name}}</li>
             <li class="list-group-item list-group-item-light">UserName: {{user.username}}</li>
             <li class="list-group-item list-group-item-light">Email: {{user.email}}</li>
-            <li class="list-group-item list-group-item-light"><span>Area Of Interest:  {% for interest in user.interests %}
+            <li class="list-group-item list-group-item-light"><span>Area Of Interest:
+                {% for interest in user.interests %}
                 <span class="badge badge-primary">{{ interest.name }}</span>
                {% endfor %}
             </span></li>
