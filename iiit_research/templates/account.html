@@ -10,7 +10,6 @@
                             <img src="{{ profile_pic }}" alt="" class="img-thumbnail rounded-circle account-img float-left" style="height:150px; width: 150px;">
                         </li>
                         <div class="media-body">
-                            <li class="list-group-item list-group-item-light" >{{current_user.user_type}}</li>
                             <li class="list-group-item list-group-item-light">{{current_user.username}}</li>
                             <li class="list-group-item list-group-item-light">{{current_user.name}}</li>
                             <li class="list-group-item list-group-item-light">{{current_user.email}}</li>
@@ -126,8 +125,7 @@
                     {% include "profile_components/followers.html" %}
 
                     {% include "profile_components/following.html" %}
-
-                    {#            {% include "profile_components/posts.html" %}#}
+                    {% include "profile_components/posts.html" %}
 
 
                 </div>
