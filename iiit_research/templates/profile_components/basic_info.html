@@ -1,7 +1,9 @@
 <div class="media">
     <ul class="list-group" style="text-align: center">
-        <li class="list-group-item list-group-item-light" style="padding-left: 60px">
-            <img src="{{ url_for('static', filename='profile_pics/'+ user.profile_pic ) }}" alt="" class="img-thumbnail rounded-circle account-img float-left" style="height:150px; width: 150px;">
+        <li class="list-group-item list-group-item-light">
+            <span style="align-items: center">
+                <img src="{{ url_for('static', filename='profile_pics/'+ user.profile_pic ) }}" alt="" class="img-thumbnail rounded-circle account-img float-left" style="height:150px; width: 150px;"></br>
+            {% include "profile_components/btn_follow.html" %}</span>
         </li>
         <div class="media-body">
             <li class="list-group-item list-group-item-light" >Name: {{user.name}}</li>

@@ -1,4 +1,9 @@
 <p>Area of interests</p>
 {% for aoi in area_of_interests %}
+    {% if aoi in user.interests %}
+    <input type="checkbox" name="aoi" value="{{ aoi.id }}" checked> {{ aoi.name }}<br>
+     {% else  %}
     <input type="checkbox" name="aoi" value="{{ aoi.id }}"> {{ aoi.name }}<br>
+     {% endif %}
+
 {% endfor %}

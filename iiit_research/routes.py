@@ -117,8 +117,9 @@ def account():
             current_user.profile_pic = picture_file
         current_user.username = form.username.data
         current_user.name = form.name.data
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        current_user.password = hashed_password
+        if form.password.data:
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            current_user.password = hashed_password
         interests = []
         for i in request.form.getlist('aoi'):
             interests.append(Interest.query.get(i))
@@ -131,8 +132,20 @@ def account():
         form.name.data = current_user.name
         form.password.data = ''
         form.confirm_password.data = ''
+
+    # TODO: optimize join
+    query = db.session.query(User.username, User.name)
+    join_query = query.join(Subscription, User.id == Subscription.follower)
+    followers = join_query.filter(Subscription.followee == current_user.id).all()
+
+    query = db.session.query(User.username, User.name)
+    join_query = query.join(Subscription, User.id == Subscription.followee)
+    following = join_query.filter(Subscription.follower == current_user.id).all()
+
+    interests = Interest.query.all()
     profile_pic = url_for('static', filename='profile_pics/' + current_user.profile_pic)
-    return render_template('account.html', title='Account', profile_pic=profile_pic, form=form)
+    return render_template('account.html', title='Account', profile_pic=profile_pic, form=form, followers=followers,
+                           following=following, user=current_user, area_of_interests=interests)
 
 
 @app.route("/post/new", methods=['GET', 'POST'])
