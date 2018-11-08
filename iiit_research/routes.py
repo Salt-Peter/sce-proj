@@ -12,7 +12,20 @@ from iiit_research.models import User, Post, Subscription, Interest
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html', title='Home')
+    query = db.session.query(User.id, User.username, User.name)
+    join_query = query.join(Subscription, User.id == Subscription.followee)
+    following = join_query.filter(Subscription.follower == current_user.id).all()
+    # FIXME: this is gonna get real ugly real soon.
+    following_ids = []
+    for user in following:
+        following_ids.append(user.id)
+
+    page = request.args.get('page', 1, type=int)
+
+    posts = Post.query.filter(Post.author_id.in_(following_ids)).order_by(Post.created_at.desc()).paginate(page=page,
+                                                                                                           per_page=10)
+
+    return render_template('home.html', title='Home', posts=posts)
 
 
 @app.route("/about")
@@ -117,7 +130,7 @@ def account():
         form.username.data = current_user.username
         form.name.data = current_user.name
         form.password.data = ''
-        form.confirm_password.data=''
+        form.confirm_password.data = ''
     profile_pic = url_for('static', filename='profile_pics/' + current_user.profile_pic)
     return render_template('account.html', title='Account', profile_pic=profile_pic, form=form)
 
