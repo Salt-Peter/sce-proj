@@ -2,7 +2,7 @@
 follower == current user in session,
 followee == user whose profile page is open
 #}
-<div style="padding-left: 50px;padding-top: 20px">
+<div class="text-center"  style="padding-top: 40px">
 {% if current_user.is_authenticated %}
     {% if current_user.id != user.id %}
         {% if is_following %}
