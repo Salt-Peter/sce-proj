@@ -263,3 +263,8 @@ def lab_detail(lab_id):
     """Displays a single post."""
     lab = Lab.query.get_or_404(lab_id)
     return render_template('lab_detail.html', lab=lab)
+
+
+@app.route('/trending')
+def trending():
+    return render_template('trending.html')
