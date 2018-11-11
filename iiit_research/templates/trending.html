@@ -1,10 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>trending</title>
-</head>
-<body>
-<h1> Trending Page</h1>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block content %}
+    <article class="media content-section">
+        <div class="media-body">
+            {% include "trending_components/most_liked_research_work.html" %}
+        </div>
+    </article>
+
+    <article class="media content-section">
+        <div class="media-body">
+            {% include "trending_components/most_followed_prof.html" %}
+        </div>
+    </article>
+
+    <article class="media content-section">
+        <div class="media-body">
+            {% include "trending_components/labs_with_most_publications.html" %}
+        </div>
+    </article>
+
+{% endblock content %}
