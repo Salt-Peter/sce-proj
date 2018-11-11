@@ -147,7 +147,6 @@ def account():
     join_query = query.join(Subscription, User.id == Subscription.followee)
     following = join_query.filter(Subscription.follower == current_user.id).all()
 
-
     interests = Interest.query.all()
     profile_pic = url_for('static', filename='profile_pics/' + current_user.profile_pic)
     return render_template('account.html', title='Account', profile_pic=profile_pic, form=form, followers=followers,
@@ -159,7 +158,17 @@ def account():
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+
+        if form.post_as.data:  # current user is a professor
+            if form.post_as.data == current_user.username:  # professor is posting as himself
+                author = current_user
+                post = Post(title=form.title.data, content=form.content.data, author=author, author_type="user")
+            else:
+                author = Lab.query.get(form.post_as.data)
+                post = Post(title=form.title.data, content=form.content.data, lab_author=author, author_type="lab")
+        else:  # current user is a student
+            post = Post(title=form.title.data, content=form.content.data, author=current_user, author_type="user")
+
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
