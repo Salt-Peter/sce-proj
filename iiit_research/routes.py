@@ -13,18 +13,31 @@ from iiit_research.models import User, Post, Subscription, Interest, Lab
 @app.route("/home")
 @login_required
 def home():
-    query = db.session.query(User.id, User.username, User.name)
-    join_query = query.join(Subscription, User.id == Subscription.followee)
-    following = join_query.filter(Subscription.follower == current_user.id).all()
+    user_query = db.session.query(User.id, User.username, User.name)
+    join_on_user_query = user_query.join(Subscription, User.id == Subscription.followee)
+    user_following = join_on_user_query.filter(Subscription.follower == current_user.id).all()
     # FIXME: this is gonna get real ugly real soon.
-    following_ids = []
-    for user in following:
-        following_ids.append(user.id)
+    user_following_ids = []
+    for user in user_following:
+        user_following_ids.append(user.id)
+
+    lab_query = db.session.query(Lab.id, Lab.name)
+    join_on_lab_query = lab_query.join(Subscription, Lab.id == Subscription.followee)
+    lab_following = join_on_lab_query.filter(Subscription.follower == current_user.id).all()
+    lab_following_ids = []
+    for lab in lab_following:
+        lab_following_ids.append(lab.id)
 
     page = request.args.get('page', 1, type=int)
 
-    posts = Post.query.filter(Post.author_id.in_(following_ids)).order_by(Post.created_at.desc()).paginate(page=page,
-                                                                                                           per_page=10)
+    # &, | can be used inside filter boz
+    # SQLAlchemy overloads the bitwise operators &, | and ~
+    # so instead of the ugly and hard-to-read prefix syntax with or_() and and_() we can use these operators:
+    # source: https://stackoverflow.com/a/14185275/5463404
+    posts = Post.query.filter(((Post.author_type == "lab") & (Post.lab_id.in_(lab_following_ids)))
+                              | ((Post.author_type == "user") & (Post.author_id.in_(user_following_ids)))).order_by(
+        Post.created_at.desc()).paginate(page=page,
+                                         per_page=10)
 
     return render_template('home.html', title='Home', posts=posts)
 
