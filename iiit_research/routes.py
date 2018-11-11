@@ -11,6 +11,7 @@ from iiit_research.models import User, Post, Subscription, Interest
 
 @app.route("/")
 @app.route("/home")
+@login_required
 def home():
     query = db.session.query(User.id, User.username, User.name)
     join_query = query.join(Subscription, User.id == Subscription.followee)
