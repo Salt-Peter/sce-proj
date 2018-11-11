@@ -34,9 +34,12 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     profile_pic = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
-    posts = db.relationship('Post', backref='author', lazy=True)
-    user_type = db.Column(db.String(10), nullable=False, default='student')
     about_me = db.Column(db.String(500), nullable=True)
+
+    # user_type can be student or professor
+    user_type = db.Column(db.String(10), nullable=False, default='student')
+
+    posts = db.relationship('Post', backref='author', lazy=True)
     interests = db.relationship('Interest', secondary=UserInterests, lazy='subquery',
                                 backref=db.backref('users', lazy=True))
 
@@ -68,23 +71,23 @@ class Lab(db.Model):
 
     members = db.relationship('User', secondary=LabMembers, lazy='subquery',
                               backref=db.backref('lab', lazy=True))
-
-
-class LabAdmin(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    posts = db.relationship('Post', backref='author_lab', lazy=True)
 
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     likes = db.relationship('Like', backref='post', lazy=True)
     like_count = db.Column(db.Integer, default=0)
+
+    # one of author_id or lab_id must be set TODO: add constraint
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), nullable=True)
+
+    # author_type can be user or lab
+    author_type = db.Column(db.String(10), nullable=False, default='user')
 
     def __repr__(self):
         return f"Post('{self.title}','{self.created_at}','{self.author_id}')"
@@ -94,14 +97,16 @@ class Post(db.Model):
 class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     follower = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
     followee = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    # followee_type can be user or lab
+    followee_type = db.Column(db.String(10), nullable=False, default='user')
 
     # FIXME: Perhaps this constraint should be handled in application logic
     __table_args__ = (
         # Make sure a user can not follow himself.
         CheckConstraint(follower != followee, name='check_follower_not_followee'),
-        UniqueConstraint('follower', 'followee', name='follower_followee_unique'),
+        UniqueConstraint('follower', 'followee', 'followee_type', name='follower_followee_unique'),
     )
 
 
