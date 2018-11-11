@@ -19,6 +19,13 @@ UserInterests = db.Table(
     db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'), primary_key=True)
 )
 
+# A mapping between lab and its members
+LabMembers = db.Table(
+    'lab_members',
+    db.Column('lab_id', db.Integer, db.ForeignKey('lab.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -59,11 +66,8 @@ class Lab(db.Model):
     description = db.Column(db.Text)
     image = db.Column(db.String(20))
 
-
-class LabMembers(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    members = db.relationship('User', secondary=LabMembers, lazy='subquery',
+                              backref=db.backref('lab', lazy=True))
 
 
 class LabAdmin(db.Model):

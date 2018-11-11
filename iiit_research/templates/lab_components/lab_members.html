@@ -1,0 +1,9 @@
+Lab Members:-
+
+<ul>
+    {% for member in lab.members %}
+        <li>
+            <a href="{{ url_for('public_profile',username=member.username ) }}">{{ member.name }}</a>
+        </li>
+    {% endfor %}
+</ul>

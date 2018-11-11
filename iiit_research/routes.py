@@ -6,7 +6,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 from iiit_research import app, db, bcrypt
 from iiit_research.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
-from iiit_research.models import User, Post, Subscription, Interest
+from iiit_research.models import User, Post, Subscription, Interest, Lab
 
 
 @app.route("/")
@@ -222,3 +222,16 @@ def like_action(post_id, action):
         post.like_count -= 1
         db.session.commit()
     return redirect(request.referrer)
+
+
+@app.route('/labs')
+def labs():
+    labs = Lab.query.all()
+    return render_template('labs.html', labs=labs)
+
+
+@app.route('/labs/<lab_id>')
+def lab_detail(lab_id):
+    """Displays a single post."""
+    lab = Lab.query.get_or_404(lab_id)
+    return render_template('lab_detail.html', lab=lab)
