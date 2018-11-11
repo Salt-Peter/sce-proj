@@ -32,8 +32,7 @@ class User(db.Model, UserMixin):
     about_me = db.Column(db.String(500),nullable=True)
     interests = db.relationship('Interest', secondary=UserInterests, lazy='subquery',
                                 backref=db.backref('users', lazy=True))
-    prof_id = db.Column(db.Integer,db.ForeignKey('user.id'))
-    prof = db.relationship('User',db.remote(id))
+    
 
 
     def like_post(self, post):
