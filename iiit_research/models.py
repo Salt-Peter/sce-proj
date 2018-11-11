@@ -35,6 +35,7 @@ class User(db.Model, UserMixin):
     prof_id = db.Column(db.Integer,db.ForeignKey('user.id'))
     prof = db.relationship('User',db.remote(id))
 
+
     def like_post(self, post):
         if not self.has_liked_post(post):
             like = Like(user_id=self.id, post_id=post.id)
