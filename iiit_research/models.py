@@ -36,7 +36,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     posts = db.relationship('Post', backref='author', lazy=True)
     user_type = db.Column(db.String(10), nullable=False, default='student')
-
+    about_me = db.Column(db.String(500), nullable=True)
     interests = db.relationship('Interest', secondary=UserInterests, lazy='subquery',
                                 backref=db.backref('users', lazy=True))
 
@@ -118,3 +118,14 @@ class Interest(db.Model):
     """Possible areas of interest user can choose from"""
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
+
+
+class PendingApproval(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    prof_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    __table_args__ = (
+        # Make sure a user can not follow himself.
+        CheckConstraint(prof_id != student_id, name='check_student_not_prof'),
+        UniqueConstraint('prof_id', 'student_id', name='student_prof_unique'),
+    )

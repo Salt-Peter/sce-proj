@@ -11,6 +11,7 @@ from iiit_research.models import User, Post, Subscription, Interest, Lab
 
 @app.route("/")
 @app.route("/home")
+@login_required
 def home():
     query = db.session.query(User.id, User.username, User.name)
     join_query = query.join(Subscription, User.id == Subscription.followee)
@@ -124,6 +125,9 @@ def account():
         for i in request.form.getlist('aoi'):
             interests.append(Interest.query.get(i))
         current_user.interests = interests
+        if form.about_me.data:
+            current_user.about_me = form.about_me.data
+
         db.session.commit()
         flash('Your information has been updated!', 'success')
         return redirect(url_for('account'))
@@ -132,6 +136,7 @@ def account():
         form.name.data = current_user.name
         form.password.data = ''
         form.confirm_password.data = ''
+        form.about_me.data = current_user.about_me
 
     # TODO: optimize join
     query = db.session.query(User.username, User.name)
@@ -141,6 +146,7 @@ def account():
     query = db.session.query(User.username, User.name)
     join_query = query.join(Subscription, User.id == Subscription.followee)
     following = join_query.filter(Subscription.follower == current_user.id).all()
+
 
     interests = Interest.query.all()
     profile_pic = url_for('static', filename='profile_pics/' + current_user.profile_pic)
