@@ -6,10 +6,10 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 from iiit_research import app, db, bcrypt
 from iiit_research.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
-from iiit_research.models import User, Post, Subscription, Interest, Lab
+from iiit_research.models import User, Post, Subscription, Interest, Lab,PendingApproval
 
 
-@app.route("/")
+
 @app.route("/home")
 @login_required
 def home():
@@ -98,7 +98,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
+            return redirect(next_page) if next_page else redirect(url_for('account'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
         # flash(f'Successfully Logged in!', 'success')
@@ -120,7 +120,7 @@ def save_pic(form_pic):
     form_pic.save(pic_path)
     return pic_fn
 
-
+@app.route("/")
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
@@ -140,6 +140,19 @@ def account():
         current_user.interests = interests
         if form.about_me.data:
             current_user.about_me = form.about_me.data
+        if form.prof_email.data:
+            prof = User.query.filter_by(email=form.prof_email.data).first()
+            if prof:
+                flag = 0
+                studentlist = PendingApproval.query.filter_by(prof_id=prof.id).all()
+                for prof_id,student_id,relation in studentlist:
+                    if student_id == current_user.id and relation == False:
+                        flag=1
+                        flash('Your Request is pending with  Professor for Approval!!','warning')
+                if flag == 0:
+                    pendingapproval = PendingApproval(prof_id=prof.id, student_id=current_user.id, relation=False)
+                    db.session.add(pendingapproval)
+                    flash('Your Request has been submitted to Professor for Approval!', 'success')
 
         db.session.commit()
         flash('Your information has been updated!', 'success')
@@ -150,6 +163,14 @@ def account():
         form.password.data = ''
         form.confirm_password.data = ''
         form.about_me.data = current_user.about_me
+        if current_user.prof_id:
+            prof = User.query.filter_by(id = current_user.prof_id).first()
+            if prof:
+                form.prof_email.data = prof.email
+        else:
+            form.prof_email.data = ' '
+
+
 
     # TODO: optimize join
     query = db.session.query(User.username, User.name)
@@ -161,9 +182,15 @@ def account():
     following = join_query.filter(Subscription.follower == current_user.id).all()
 
     interests = Interest.query.all()
+
+    query = db.session.query(User.id, User.username, User.name)
+    join_query = query.join(PendingApproval, User.id == PendingApproval.student_id)
+    pendingStudentApprovalList = join_query.filter(PendingApproval.prof_id == current_user.id).all()
+
+    students = User.query.filter_by(prof_id=current_user.id).all()
     profile_pic = url_for('static', filename='profile_pics/' + current_user.profile_pic)
     return render_template('account.html', title='Account', profile_pic=profile_pic, form=form, followers=followers,
-                           following=following, user=current_user, area_of_interests=interests)
+                           following=following, user=current_user, area_of_interests=interests,pendingStudentApprovalList=pendingStudentApprovalList,students=students)
 
 
 @app.route("/post/new", methods=['GET', 'POST'])
@@ -230,6 +257,22 @@ def follow_action(user_id, action):
         db.session.commit()
     if action == 'unfollow':
         row = Subscription.query.filter_by(follower=current_user.id, followee=user_id).first_or_404()
+        db.session.delete(row)
+        db.session.commit()
+
+    return redirect(request.referrer)
+
+@app.route('/approve_request/<user_id>/<action>')
+@login_required
+def approve_request(user_id, action):
+    if action == 'accept':
+        user = User.query.filter_by(id=user_id).first()
+        user.prof_id = current_user.id
+        row = PendingApproval.query.filter_by(prof_id=current_user.id, student_id=user_id).first_or_404()
+        db.session.delete(row)
+        db.session.commit()
+    if action == 'delete':
+        row = PendingApproval.query.filter_by(prof_id=current_user.id, student_id=user_id).first_or_404()
         db.session.delete(row)
         db.session.commit()
 
