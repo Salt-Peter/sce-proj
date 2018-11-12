@@ -1,7 +1,7 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField,SelectField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 
 from iiit_research.models import User
@@ -39,8 +39,8 @@ class UpdateAccountForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
     password = PasswordField('Password')
-    confirm_password = PasswordField('confirm password', validators=[ EqualTo('password')])
-    about_me = TextAreaField('Write About Your Current Research',validators=[DataRequired()])
+    confirm_password = PasswordField('confirm password', validators=[EqualTo('password')])
+    about_me = TextAreaField('Write About Your Current Research', validators=[DataRequired()])
     prof_email = StringField('Professor Email Under whom you are currently working')
     submit = SubmitField('Update')
 
@@ -56,18 +56,14 @@ class UpdateAccountForm(FlaskForm):
             if user:
                 raise ValidationError('That email is already in use. Please use a different email.')
 
-    def validate_prof_email(self,prof_email):
+    def validate_prof_email(self, prof_email):
         user = User.query.filter_by(email=prof_email.data).first()
         if not user or user.user_type == 'student':
-                raise ValidationError('No Professor is registered with given email. Please use a different email.')
-
-
-
-
-
+            raise ValidationError('No Professor is registered with given email. Please use a different email.')
 
 
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
+    post_as = StringField('Post as')
     submit = SubmitField('Post')
