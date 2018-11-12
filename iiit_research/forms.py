@@ -40,7 +40,7 @@ class UpdateAccountForm(FlaskForm):
     picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
     password = PasswordField('Password')
     confirm_password = PasswordField('confirm password', validators=[EqualTo('password')])
-    about_me = TextAreaField('Write About Your Current Research', validators=[DataRequired()])
+    about_me = TextAreaField('Write About Your Current Research')
     prof_email = StringField('Professor Email Under whom you are currently working')
     submit = SubmitField('Update')
 
