@@ -42,6 +42,8 @@ class User(db.Model, UserMixin):
     posts = db.relationship('Post', backref='author', lazy=True)
     interests = db.relationship('Interest', secondary=UserInterests, lazy='subquery',
                                 backref=db.backref('users', lazy=True))
+    prof_id = db.Column(db.Integer,nullable=True)
+
 
     def like_post(self, post):
         if not self.has_liked_post(post):
@@ -129,6 +131,7 @@ class PendingApproval(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     prof_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    relation = db.Column(db.BOOLEAN)
     __table_args__ = (
         # Make sure a user can not follow himself.
         CheckConstraint(prof_id != student_id, name='check_student_not_prof'),

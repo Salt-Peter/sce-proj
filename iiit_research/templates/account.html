@@ -18,7 +18,9 @@
                                     <span class="badge badge-primary">{{ interest.name }}</span>
                                 {% endfor %}
                             </span></li>
+                            {% if current_user.user_type == 'student' %}
                             <li class="list-group-item list-group-item-light">Working Under: {{ current_user.prof_id }}</li>
+                            {% endif %}
 
                         </div>
                     </ul>
@@ -38,6 +40,15 @@
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#menu3">Posts</a>
                     </li>
+                    {% if current_user.user_type == 'professor' %}
+                       <li class="nav-item">
+                           <a class="nav-link" data-toggle="tab" href="#menu4">Students Request</a>
+                       </li>
+                        <li class="nav-item">
+                           <a class="nav-link" data-toggle="tab" href="#menu5">Students</a>
+                       </li>
+
+                    {% endif %}
                 </ul>
 
                 <div class="tab-content">
@@ -74,6 +85,21 @@
                                                 {{ form.username(class="form-control form-control-lg") }}
                                             {% endif %}
                                         </div>
+                                    {% if current_user.user_type == 'student' %}
+                                        <div class="from-group">
+                                            {{ form.prof_email.label(class="form-control-label") }}
+                                            {% if form.prof_email.errors %}
+                                                {{ form.prof_email(class="form-control form-control-lg is-invalid") }}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.prof_email.errors %}
+                                                        <span>{{ error }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.prof_email(class="form-control form-control-lg") }}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
                                         <div class="from-group">
                                             {{ form.password.label(class="form-control-label") }}
                                             {% if form.password.errors %}
@@ -145,7 +171,10 @@
 
                     {% include "profile_components/following.html" %}
                     {% include "profile_components/posts.html" %}
-
+                 {% if current_user.user_type == 'professor' %}
+                     {% include "profile_components/pendingapproval.html" %}
+                     {% include "profile_components/studentslist.html" %}
+                 {% endif %}
 
                 </div>
             </div>
