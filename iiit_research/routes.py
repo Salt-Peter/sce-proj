@@ -265,15 +265,16 @@ def public_profile(username):
                            is_following=is_following)
 
 
-@app.route('/follow_action/<user_id>/<action>')
+@app.route('/follow_action/<user_id>/<action>/<followee_type>')
 @login_required
-def follow_action(user_id, action):
+def follow_action(user_id, action, followee_type):
     if action == 'follow':
-        row = Subscription(follower=current_user.id, followee=user_id)
+        row = Subscription(follower=current_user.id, followee=user_id, followee_type=followee_type)
         db.session.add(row)
         db.session.commit()
     if action == 'unfollow':
-        row = Subscription.query.filter_by(follower=current_user.id, followee=user_id).first_or_404()
+        row = Subscription.query.filter_by(follower=current_user.id, followee=user_id,
+                                           followee_type=followee_type).first_or_404()
         db.session.delete(row)
         db.session.commit()
 
@@ -321,9 +322,17 @@ def labs():
 
 @app.route('/labs/<lab_id>')
 def lab_detail(lab_id):
-    """Displays a single post."""
     lab = Lab.query.get_or_404(lab_id)
-    return render_template('lab_detail.html', lab=lab)
+
+    is_following = False  # specifies whether currently logged in user follows this lab
+    if current_user.is_authenticated:
+        from sqlalchemy import and_
+        is_following = db.session.query(
+            db.exists().where(
+                and_(Subscription.follower == current_user.id,
+                     Subscription.followee == lab.id))).scalar()
+
+    return render_template('lab_detail.html', lab=lab, is_following=is_following)
 
 
 @app.route('/trending')

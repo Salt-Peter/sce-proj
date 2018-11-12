@@ -103,10 +103,7 @@ class Subscription(db.Model):
     # followee_type can be user or lab
     followee_type = db.Column(db.String(10), nullable=False, default='user')
 
-    # FIXME: Perhaps this constraint should be handled in application logic
     __table_args__ = (
-        # Make sure a user can not follow himself.
-        CheckConstraint(follower != followee, name='check_follower_not_followee'),
         UniqueConstraint('follower', 'followee', 'followee_type', name='follower_followee_unique'),
     )
 

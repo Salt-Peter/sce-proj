@@ -2,19 +2,21 @@
 follower == current user in session,
 followee == user whose profile page is open
 #}
-<div class="text-center"  style="padding-top: 40px">
-{% if current_user.is_authenticated %}
-    {% if current_user.id != user.id %}
-        {% if is_following %}
+<div class="text-center" style="padding-top: 40px">
+    {% if current_user.is_authenticated %}
+        {% if current_user.id != user.id %}
+            {% if is_following %}
 
-            <a href="{{ url_for('follow_action', user_id=user.id, action='unfollow') }}" class="btn btn-outline-warning">
-                   Unfollow
-            </a>
-        {% else %}
+                <a href="{{ url_for('follow_action', user_id=user.id, action='unfollow', followee_type="user") }}"
+                   class="btn btn-outline-warning">
+                    Unfollow
+                </a>
+            {% else %}
 
-            <a href="{{ url_for('follow_action', user_id=user.id, action='follow') }}" class="btn btn-outline-success">
-                Follow  </a>
+                <a href="{{ url_for('follow_action', user_id=user.id, action='follow', followee_type="user") }}"
+                   class="btn btn-outline-success">
+                    Follow </a>
+            {% endif %}
         {% endif %}
     {% endif %}
-{% endif %}
 </div>
