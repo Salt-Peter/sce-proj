@@ -2,15 +2,15 @@
     <div class="table-responsive">
         <table class="table table-hover" style="width: 40%">
             <tbody>
-            {% for username, name in following %}
+            {% for following in following %}
                 <tr>
 
-                    <td><img src="{{ url_for('static', filename='profile_pics/'+ user.profile_pic ) }}" alt=""
+                    <td><img src="{{ url_for('static', filename='profile_pics/'+ following.profile_pic ) }}" alt=""
                              class="img-thumbnail rounded-circle account-img float-left"
                              style="height:70px; width: 70px;"></td>
-                    <td><a href="{{ url_for('public_profile',username=username) }}">{{ name }}</a></td>
+                    <td><a href="{{ url_for('public_profile',username=following.username) }}">{{ following.name }}</a>
+                    </td>
                 </tr>
-
             {% endfor %}
             </tbody>
         </table>
