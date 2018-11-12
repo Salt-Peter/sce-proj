@@ -57,9 +57,10 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('That email is already in use. Please use a different email.')
 
     def validate_prof_email(self, prof_email):
-        user = User.query.filter_by(email=prof_email.data).first()
-        if not user or user.user_type == 'student':
-            raise ValidationError('No Professor is registered with given email. Please use a different email.')
+        if prof_email.data:
+            user = User.query.filter_by(email=prof_email.data).first()
+            if not user or user.user_type == 'student':
+                raise ValidationError('No Professor is registered with given email. Please use a different email.')
 
 
 class PostForm(FlaskForm):

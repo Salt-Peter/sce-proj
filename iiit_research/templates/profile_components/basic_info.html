@@ -2,18 +2,23 @@
     <ul class="list-group" style="text-align: center">
         <li class="list-group-item list-group-item-light">
             <span style="align-items: center">
-                <img src="{{ url_for('static', filename='profile_pics/'+ user.profile_pic ) }}" alt="" class="img-thumbnail rounded-circle account-img float-left" style="max-height:150px; max-width: 150px;"></br>
-            {% include "profile_components/btn_follow.html" %}</span>
+                <img src="{{ url_for('static', filename='profile_pics/'+ user.profile_pic ) }}" alt=""
+                     class="img-thumbnail rounded-circle account-img float-left"
+                     style="max-height:150px; max-width: 150px;"></br>
+                {% include "profile_components/btn_follow.html" %}</span>
         </li>
         <div class="media-body">
-            <li class="list-group-item list-group-item-light" >Name: {{user.name}}</li>
-            <li class="list-group-item list-group-item-light">UserName: {{user.username}}</li>
-            <li class="list-group-item list-group-item-light">Email: {{user.email}}</li>
+            <li class="list-group-item list-group-item-light">Name: {{ user.name }}</li>
+            <li class="list-group-item list-group-item-light">UserName: {{ user.username }}</li>
+            <li class="list-group-item list-group-item-light">Email: {{ user.email }}</li>
             <li class="list-group-item list-group-item-light"><span>Area Of Interest:
                 {% for interest in user.interests %}
-                <span class="badge badge-primary">{{ interest.name }}</span>
-               {% endfor %}
+                    <span class="badge badge-primary">{{ interest.name }}</span>
+                {% endfor %}
             </span></li>
+            {% if user.user_type == 'student' %}
+                <li class="list-group-item list-group-item-light">Working Under: {{ proff.name }}</li>
+            {% endif %}
         </div>
     </ul>
 </div>

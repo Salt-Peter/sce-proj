@@ -145,14 +145,15 @@ def account():
             if prof:
                 flag = 0
                 studentlist = PendingApproval.query.filter_by(prof_id=prof.id).all()
-                for prof_id, student_id, relation in studentlist:
-                    if student_id == current_user.id and relation == False:
-                        flag = 1
-                        flash('Your Request is pending with  Professor for Approval!!', 'warning')
-                if flag == 0:
-                    pendingapproval = PendingApproval(prof_id=prof.id, student_id=current_user.id, relation=False)
-                    db.session.add(pendingapproval)
-                    flash('Your Request has been submitted to Professor for Approval!', 'success')
+                if studentlist:
+                    for student in studentlist:
+                        if student.student_id == current_user.id and student.relation == False:
+                            flag = 1
+                            flash('Your Request is pending with  Professor for Approval!!', 'warning')
+                    if flag == 0:
+                        pendingapproval = PendingApproval(prof_id=prof.id, student_id=current_user.id, relation=False)
+                        db.session.add(pendingapproval)
+                        flash('Your Request has been submitted to Professor for Approval!', 'success')
 
         db.session.commit()
         flash('Your information has been updated!', 'success')
@@ -163,12 +164,7 @@ def account():
         form.password.data = ''
         form.confirm_password.data = ''
         form.about_me.data = current_user.about_me
-        if current_user.prof_id:
-            prof = User.query.filter_by(id=current_user.prof_id).first()
-            if prof:
-                form.prof_email.data = prof.email
-        else:
-            form.prof_email.data = ' '
+        form.prof_email.data = ''
 
     # TODO: optimize join
     query = db.session.query(User.username, User.name, User.profile_pic)
@@ -194,11 +190,12 @@ def account():
     join_query = query.join(PendingApproval, User.id == PendingApproval.student_id)
     pending_student_approval_list = join_query.filter(PendingApproval.prof_id == current_user.id).all()
 
+    proff = User.query.filter_by(id=current_user.prof_id).first()
     students = User.query.filter_by(prof_id=current_user.id).all()
     profile_pic = url_for('static', filename='profile_pics/' + current_user.profile_pic)
     return render_template('account.html', title='Account', profile_pic=profile_pic, form=form, followers=followers,
                            following=following, user=current_user, area_of_interests=interests,
-                           pendingStudentApprovalList=pending_student_approval_list, students=students)
+                           pendingStudentApprovalList=pending_student_approval_list, students=students, prof=proff)
 
 
 @app.route("/post/new", methods=['GET', 'POST'])
@@ -259,10 +256,12 @@ def public_profile(username):
                 and_(Subscription.follower == current_user.id,
                      Subscription.followee == user.id))).scalar()
 
+    prof = User.query.filter_by(id=current_user.prof_id).first()
+
     return render_template('profile.html',
                            user=user,
                            followers=followers, following=following,
-                           is_following=is_following)
+                           is_following=is_following, prof=prof)
 
 
 @app.route('/follow_action/<user_id>/<action>/<followee_type>')
