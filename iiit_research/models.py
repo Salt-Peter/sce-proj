@@ -42,8 +42,7 @@ class User(db.Model, UserMixin):
     posts = db.relationship('Post', backref='author', lazy=True)
     interests = db.relationship('Interest', secondary=UserInterests, lazy='subquery',
                                 backref=db.backref('users', lazy=True))
-    prof_id = db.Column(db.Integer,nullable=True)
-
+    prof_id = db.Column(db.Integer, nullable=True)
 
     def like_post(self, post):
         if not self.has_liked_post(post):

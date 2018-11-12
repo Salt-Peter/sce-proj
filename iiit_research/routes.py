@@ -6,8 +6,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 from iiit_research import app, db, bcrypt
 from iiit_research.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
-from iiit_research.models import User, Post, Subscription, Interest, Lab,PendingApproval
-
+from iiit_research.models import User, Post, Subscription, Interest, Lab, PendingApproval
 
 
 @app.route("/home")
@@ -120,6 +119,7 @@ def save_pic(form_pic):
     form_pic.save(pic_path)
     return pic_fn
 
+
 @app.route("/")
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
@@ -145,10 +145,10 @@ def account():
             if prof:
                 flag = 0
                 studentlist = PendingApproval.query.filter_by(prof_id=prof.id).all()
-                for prof_id,student_id,relation in studentlist:
+                for prof_id, student_id, relation in studentlist:
                     if student_id == current_user.id and relation == False:
-                        flag=1
-                        flash('Your Request is pending with  Professor for Approval!!','warning')
+                        flag = 1
+                        flash('Your Request is pending with  Professor for Approval!!', 'warning')
                 if flag == 0:
                     pendingapproval = PendingApproval(prof_id=prof.id, student_id=current_user.id, relation=False)
                     db.session.add(pendingapproval)
@@ -164,13 +164,11 @@ def account():
         form.confirm_password.data = ''
         form.about_me.data = current_user.about_me
         if current_user.prof_id:
-            prof = User.query.filter_by(id = current_user.prof_id).first()
+            prof = User.query.filter_by(id=current_user.prof_id).first()
             if prof:
                 form.prof_email.data = prof.email
         else:
             form.prof_email.data = ' '
-
-
 
     # TODO: optimize join
     query = db.session.query(User.username, User.name)
@@ -185,12 +183,13 @@ def account():
 
     query = db.session.query(User.id, User.username, User.name)
     join_query = query.join(PendingApproval, User.id == PendingApproval.student_id)
-    pendingStudentApprovalList = join_query.filter(PendingApproval.prof_id == current_user.id).all()
+    pending_student_approval_list = join_query.filter(PendingApproval.prof_id == current_user.id).all()
 
     students = User.query.filter_by(prof_id=current_user.id).all()
     profile_pic = url_for('static', filename='profile_pics/' + current_user.profile_pic)
     return render_template('account.html', title='Account', profile_pic=profile_pic, form=form, followers=followers,
-                           following=following, user=current_user, area_of_interests=interests,pendingStudentApprovalList=pendingStudentApprovalList,students=students)
+                           following=following, user=current_user, area_of_interests=interests,
+                           pendingStudentApprovalList=pending_student_approval_list, students=students)
 
 
 @app.route("/post/new", methods=['GET', 'POST'])
@@ -261,6 +260,7 @@ def follow_action(user_id, action):
         db.session.commit()
 
     return redirect(request.referrer)
+
 
 @app.route('/approve_request/<user_id>/<action>')
 @login_required
