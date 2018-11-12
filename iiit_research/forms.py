@@ -41,6 +41,7 @@ class UpdateAccountForm(FlaskForm):
     password = PasswordField('Password')
     confirm_password = PasswordField('confirm password', validators=[EqualTo('password')])
     about_me = TextAreaField('Write About Your Current Research', validators=[DataRequired()])
+    prof_email = StringField('Professor Email Under whom you are currently working')
     submit = SubmitField('Update')
 
     def validate_username(self, username):
@@ -54,6 +55,11 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('That email is already in use. Please use a different email.')
+
+    def validate_prof_email(self, prof_email):
+        user = User.query.filter_by(email=prof_email.data).first()
+        if not user or user.user_type == 'student':
+            raise ValidationError('No Professor is registered with given email. Please use a different email.')
 
 
 class PostForm(FlaskForm):
