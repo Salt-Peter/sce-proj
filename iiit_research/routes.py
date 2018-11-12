@@ -9,7 +9,7 @@ from iiit_research.forms import RegistrationForm, LoginForm, UpdateAccountForm, 
 from iiit_research.models import User, Post, Subscription, Interest, Lab,PendingApproval
 
 
-@app.route("/")
+
 @app.route("/home")
 @login_required
 def home():
@@ -98,7 +98,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
+            return redirect(next_page) if next_page else redirect(url_for('account'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
         # flash(f'Successfully Logged in!', 'success')
@@ -120,7 +120,7 @@ def save_pic(form_pic):
     form_pic.save(pic_path)
     return pic_fn
 
-
+@app.route("/")
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
