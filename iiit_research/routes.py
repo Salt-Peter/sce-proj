@@ -176,10 +176,17 @@ def account():
     followers = join_query.filter((Subscription.followee == current_user.id)
                                   & (Subscription.followee_type == "user")).all()
 
-    query = db.session.query(User.username, User.name, User.profile_pic)
-    join_query = query.join(Subscription, User.id == Subscription.followee)
-    following = join_query.filter((Subscription.follower == current_user.id)
-                                  & (Subscription.followee_type == "user")).all()
+    query_user = db.session.query(User.username, User.name, User.profile_pic)
+    join_query = query_user.join(Subscription, User.id == Subscription.followee)
+    following_users = join_query.filter((Subscription.follower == current_user.id)
+                                        & (Subscription.followee_type == "user")).all()
+
+    query_lab = db.session.query(Lab.id, Lab.name, Lab.image)
+    join_query = query_lab.join(Subscription, Lab.id == Subscription.followee)
+    following_labs = join_query.filter((Subscription.follower == current_user.id)
+                                       & (Subscription.followee_type == "lab")).all()
+
+    following = following_users + following_labs
 
     interests = Interest.query.all()
 
@@ -232,10 +239,17 @@ def public_profile(username):
     followers = join_query.filter((Subscription.followee == user.id)
                                   & (Subscription.followee_type == "user")).all()
 
-    query = db.session.query(User.username, User.name, User.profile_pic)
-    join_query = query.join(Subscription, User.id == Subscription.followee)
-    following = join_query.filter((Subscription.follower == user.id)
-                                  & (Subscription.followee_type == "user")).all()
+    query_user = db.session.query(User.username, User.name, User.profile_pic)
+    join_query = query_user.join(Subscription, User.id == Subscription.followee)
+    following_users = join_query.filter((Subscription.follower == current_user.id)
+                                        & (Subscription.followee_type == "user")).all()
+
+    query_lab = db.session.query(Lab.id, Lab.name, Lab.image)
+    join_query = query_lab.join(Subscription, Lab.id == Subscription.followee)
+    following_labs = join_query.filter((Subscription.follower == current_user.id)
+                                       & (Subscription.followee_type == "lab")).all()
+
+    following = following_users + following_labs
 
     is_following = False  # specifies whether currently logged in user follows this user
     if current_user.is_authenticated:
