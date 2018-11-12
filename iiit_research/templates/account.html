@@ -30,10 +30,13 @@
                 <ul class="nav nav-tabs" role="tablist">
                     {% if current_user.user_type == 'professor' %}
                        <li class="nav-item">
-                           <a class="nav-link" data-toggle="tab" href="#menu4">Students Request</a>
+                           <a class="nav-link" data-toggle="tab" href="#menu4">Request</a>
                        </li>
                         <li class="nav-item">
                            <a class="nav-link" data-toggle="tab" href="#menu5">Students</a>
+                       </li>
+                        <li class="nav-item">
+                           <a class="nav-link" data-toggle="tab" href="#menu6">Labs</a>
                        </li>
 
                     {% endif %}
@@ -55,6 +58,7 @@
                 {% if current_user.user_type == 'professor' %}
                      {% include "profile_components/pendingapproval.html" %}
                      {% include "profile_components/studentslist.html" %}
+                     {% include "profile_components/labsmember.html" %}
                  {% endif %}
                   {% include "profile_components/posts.html" %}
 
