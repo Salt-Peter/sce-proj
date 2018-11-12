@@ -88,3 +88,10 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
+
+
+.nav-tabs {
+   overflow-x: auto;
+   overflow-y:hidden;
+   flex-wrap: nowrap;
+}
