@@ -42,17 +42,20 @@ def home():
 
 
 @app.route("/about")
+@login_required
 def about():
     return render_template('about.html', title='About')
 
 
 @app.route("/posts")
+@login_required
 def post():
     posts = Post.query.all()
     return render_template('posts.html', posts=posts, title='Posts')
 
 
 @app.route("/posts/<post_id>")
+@login_required
 def post_detail(post_id):
     """Displays a single post."""
     # TODO: change to use slug instead of id
@@ -61,6 +64,7 @@ def post_detail(post_id):
 
 
 @app.route("/register", methods=['GET', 'POST'])
+@login_required
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -88,6 +92,7 @@ def register():
 
 
 @app.route("/login", methods=['GET', 'POST'])
+@login_required
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -106,6 +111,7 @@ def login():
 
 
 @app.route("/logout")
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
@@ -120,7 +126,7 @@ def save_pic(form_pic):
     return pic_fn
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
@@ -222,6 +228,7 @@ def new_post():
 
 
 @app.route("/user/<username>")
+@login_required
 def public_profile(username):
     """ Displays user's public profile """
     user = User.query.filter_by(username=username).first()
@@ -314,12 +321,14 @@ def like_action(post_id, action):
 
 
 @app.route('/labs')
+@login_required
 def labs():
     labs = Lab.query.all()
     return render_template('labs.html', labs=labs)
 
 
 @app.route('/labs/<lab_id>')
+@login_required
 def lab_detail(lab_id):
     lab = Lab.query.get_or_404(lab_id)
 
@@ -335,5 +344,6 @@ def lab_detail(lab_id):
 
 
 @app.route('/trending')
+@login_required
 def trending():
     return render_template('trending.html')
