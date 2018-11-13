@@ -358,7 +358,7 @@ def create_lab():
         else:
             lab = Lab(name=form.name.data, description=form.description.data, image='default.jpg')
 
-        db.session.add(lab)
+        current_user.lab.append(lab)
         db.session.commit()
         flash('Your lab has been created!', 'success')
         return redirect(url_for('labs'))
