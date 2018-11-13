@@ -145,7 +145,6 @@ class PendingApproval(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     prof_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    relation = db.Column(db.BOOLEAN)
     __table_args__ = (
         # Make sure a user can not follow himself.
         CheckConstraint(prof_id != student_id, name='check_student_not_prof'),

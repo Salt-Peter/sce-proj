@@ -159,15 +159,20 @@ def account():
         if form.prof_email.data:
             prof = User.query.filter_by(email=form.prof_email.data).first()
             if prof:
-                flag = 0
-                studentlist = PendingApproval.query.filter_by(prof_id=prof.id).all()
-                if studentlist:
-                    for student in studentlist:
-                        if student.student_id == current_user.id and student.relation == False:
-                            flag = 1
-                            flash('Your Request is pending with  Professor for Approval!!', 'warning')
+                if current_user.prof_id == prof.id:
+                    flash('Your are already approved', 'warning')
+                else:
+                    flag = 0
+                    studentlist = PendingApproval.query.filter_by(prof_id=prof.id).all()
+                    if studentlist:
+                        for student in studentlist:
+                            if student.student_id == current_user.id:
+                                flag = 1
+                                flash('Your Request is pending with  Professor for Approval!!', 'warning')
+                                break
+
                     if flag == 0:
-                        pendingapproval = PendingApproval(prof_id=prof.id, student_id=current_user.id, relation=False)
+                        pendingapproval = PendingApproval(prof_id=prof.id, student_id=current_user.id)
                         db.session.add(pendingapproval)
                         flash('Your Request has been submitted to Professor for Approval!', 'success')
 
