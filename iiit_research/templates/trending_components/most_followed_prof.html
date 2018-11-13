@@ -1,0 +1,7 @@
+<h1>Most followed users</h1>
+
+{% for followee in most_followed %}
+    <p>
+        <a href="{{ url_for('public_profile', username=followee.username) }}">{{ followee.name }}</a>
+    </p>
+{% endfor %}

@@ -378,7 +378,22 @@ def lab_detail(lab_id):
 @login_required
 def trending():
     top_5_posts = Post.query.order_by(Post.like_count.desc()).limit(5)
-    return render_template('trending.html', most_liked_works=top_5_posts)
+
+    from sqlalchemy.sql.functions import func
+    from sqlalchemy import desc
+
+    # SELECT id,username,name, followee, followee_type, count(follower) AS num_followers
+    # FROM subscription,user
+    # GROUP BY followee
+    # ORDER BY num_followers desc
+    # LIMIT 5
+    most_followed = db.session.query(User.id, User.username, User.name, Subscription.followee,
+                                     Subscription.followee_type,
+                                     func.count(Subscription.follower).label('num_followers')) \
+        .filter((Subscription.followee_type == "user") & (Subscription.followee == User.id)) \
+        .group_by(Subscription.followee) \
+        .order_by(desc('num_followers')).limit(5)
+    return render_template('trending.html', most_liked_works=top_5_posts, most_followed=most_followed)
 
 
 @app.route('/verify/<token>', methods=['GET', 'POST'])
