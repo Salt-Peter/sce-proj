@@ -6,7 +6,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 
 from iiit_research import app, db, bcrypt, mail
-from iiit_research.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
+from iiit_research.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, SearchForm
 from iiit_research.models import User, Post, Subscription, Interest, Lab, PendingApproval
 
 
@@ -387,3 +387,27 @@ def verify_email(token):
         db.session.commit()
 
     return render_template('verify.html', title='Email Verification')
+
+
+@app.route("/search", methods=['GET', 'POST'])
+@login_required
+def search():
+    form = SearchForm()
+    results = set()
+    if form.validate_on_submit():
+        search_for = form.search_for.data
+        query = form.query.data
+        if search_for == "student":
+            results.update(User.query.filter(User.user_type == "student")
+                           .filter(User.name.like('%{0}%'.format(query))))
+        elif search_for == "professor":
+            results.update(
+                User.query.filter(User.user_type == "professor")
+                    .filter(User.name.like('%{0}%'.format(query))))
+        elif search_for == "lab":
+            results.update(Lab.query.filter(Lab.name.like('%{0}%'.format(query))))
+        elif search_for == "area_of_interest":
+            interests = Interest.query.filter(Interest.name.like('%{0}%'.format(query))).all()
+            for interest in interests:
+                results.update(interest.users)
+    return render_template('search.html', title='Search', form=form, results=results, result_type=form.search_for.data)
