@@ -5,7 +5,7 @@ from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, current_user, logout_user, login_required
 
 from iiit_research import app, db, bcrypt
-from iiit_research.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
+from iiit_research.forms import RegistrationForm, CreateLabForm, LoginForm, UpdateAccountForm, PostForm
 from iiit_research.models import User, Post, Subscription, Interest, Lab, PendingApproval
 
 
@@ -300,7 +300,28 @@ def labs():
     labs = Lab.query.all()
     return render_template('labs.html', labs=labs)
 
+@app.route('/labs/create', methods=['GET', 'POST'] )
+def create_lab():
+    form = CreateLabForm()  
 
+    if form.validate_on_submit():
+         
+
+        if form.image.data:
+            picture_file = save_pic(form.image.data)
+            lab = Lab(name = form.name.data, description = form.description.data,image=picture_file)
+        else:
+            lab = Lab(name = form.name.data, description = form.description.data)
+
+            
+    
+        db.session.add(lab)
+        db.session.commit()
+        flash('Your lab has been created!', 'success')
+        return redirect(url_for('labs'))
+
+    return render_template('create_lab.html', title='New Lab', form=form)
+   
 @app.route('/labs/<lab_id>')
 def lab_detail(lab_id):
     """Displays a single post."""

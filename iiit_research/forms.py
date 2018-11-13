@@ -6,6 +6,11 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 
 from iiit_research.models import User
 
+class CreateLabForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=2, max=30)])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    image = FileField('Update image', validators=[FileAllowed(['jpg', 'png'])]) 
+    submit = SubmitField('Create')
 
 class RegistrationForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(min=2, max=30)])
