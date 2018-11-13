@@ -207,7 +207,7 @@ def account():
 
     interests = Interest.query.all()
 
-    query = db.session.query(User.id, User.username, User.name)
+    query = db.session.query(User.id, User.username, User.name, User.profile_pic)
     join_query = query.join(PendingApproval, User.id == PendingApproval.student_id)
     pending_student_approval_list = join_query.filter(PendingApproval.prof_id == current_user.id).all()
 
