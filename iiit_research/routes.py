@@ -336,21 +336,26 @@ def labs():
     labs = Lab.query.all()
     return render_template('labs.html', labs=labs)
 
+def save_lab_image(form_pic):
+    random_hex = secrets.token_hex(8)
+    fname, fext = os.path.splitext(form_pic.filename)
+    pic_fn = random_hex + fext
+    pic_path = os.path.join(app.root_path, 'static/lab_images/', pic_fn)
+    form_pic.save(pic_path)
+    return pic_fn
+
 @app.route('/labs/create', methods=['GET', 'POST'] )
 def create_lab():
     form = CreateLabForm()  
 
     if form.validate_on_submit():
-         
-
+        print(form.image.data)
         if form.image.data:
-            picture_file = save_pic(form.image.data)
+            picture_file = save_lab_image(form.image.data)
             lab = Lab(name = form.name.data, description = form.description.data,image=picture_file)
         else:
-            lab = Lab(name = form.name.data, description = form.description.data)
+            lab = Lab(name = form.name.data, description = form.description.data,image='default.jpg')
 
-            
-    
         db.session.add(lab)
         db.session.commit()
         flash('Your lab has been created!', 'success')

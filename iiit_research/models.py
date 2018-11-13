@@ -89,6 +89,9 @@ class Lab(db.Model):
                               backref=db.backref('lab', lazy=True))
     posts = db.relationship('Post', backref='author_lab', lazy=True)
 
+    def __repr__(self):
+        return f"Lab('{self.name}','{self.description}', '{self.image}')"
+
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
