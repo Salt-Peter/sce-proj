@@ -344,4 +344,5 @@ def lab_detail(lab_id):
 @app.route('/trending')
 @login_required
 def trending():
-    return render_template('trending.html')
+    top_5_posts = Post.query.order_by(Post.like_count.desc()).limit(5)
+    return render_template('trending.html', most_liked_works=top_5_posts)
