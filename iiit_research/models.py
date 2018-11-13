@@ -2,8 +2,9 @@ from datetime import datetime
 
 from flask_login import UserMixin
 from sqlalchemy import CheckConstraint, UniqueConstraint
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
-from iiit_research import db, login_manager
+from iiit_research import db, login_manager, app
 
 
 @login_manager.user_loader
@@ -35,6 +36,7 @@ class User(db.Model, UserMixin):
     profile_pic = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
     about_me = db.Column(db.String(500), nullable=True)
+    email_verify = db.Column(db.Boolean, nullable=False, default=False)
 
     # user_type can be student or professor
     user_type = db.Column(db.String(10), nullable=False, default='student')
@@ -59,6 +61,19 @@ class User(db.Model, UserMixin):
         return Like.query.filter(
             Like.user_id == self.id,
             Like.post_id == post.id).count() > 0
+
+    def generate_verification_token(self, expires_sec=3600):
+        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
 
     def __repr__(self):
         return f"User('{self.username}','{self.email}', '{self.profile_pic}')"
