@@ -4,7 +4,6 @@
             <tbody>
             {% for lab in current_user.lab %}
                 <tr>
-
                     <td><img src="{{ url_for('static', filename='lab_images/'+ lab.image ) }}" alt=""
                              class="img-thumbnail rounded-circle account-img float-left"
                              style="height:70px; width: 70px;"></td>

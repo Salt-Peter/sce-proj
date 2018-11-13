@@ -113,6 +113,21 @@
                                                 {% endif %}
                                             </div>
                                         {% endif %}
+                                        {% if current_user.user_type == 'professor' %}
+                                            <div class="from-group">
+                                                {{ form.lablist.label(class="form-control-label") }}
+                                                {% if form.lablist.errors %}
+                                                    {{ form.lablist(class="form-control form-control-lg is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.lablist.errors %}
+                                                            <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.lablist(class="form-control form-control-lg") }}
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
                                         <div class="from-group">
                                             {{ form.password.label(class="form-control-label") }}
                                             {% if form.password.errors %}

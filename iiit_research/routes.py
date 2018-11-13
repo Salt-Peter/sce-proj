@@ -6,8 +6,10 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 
 from iiit_research import app, db, bcrypt, mail
+
 from iiit_research.forms import RegistrationForm, CreateLabForm, LoginForm, UpdateAccountForm, PostForm, SearchForm
-from iiit_research.models import User, Post, Subscription, Interest, Lab, PendingApproval
+from iiit_research.models import User, Post, Subscription, Interest, Lab, PendingApproval,LabMembers
+
 
 
 @app.route("/home")
@@ -175,7 +177,8 @@ def account():
                         pendingapproval = PendingApproval(prof_id=prof.id, student_id=current_user.id)
                         db.session.add(pendingapproval)
                         flash('Your Request has been submitted to Professor for Approval!', 'success')
-
+        if form.lablist.data:
+            current_user.lab.append(form.lablist.data)
         db.session.commit()
         flash('Your information has been updated!', 'success')
         return redirect(url_for('account'))

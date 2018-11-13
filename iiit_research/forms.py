@@ -3,8 +3,8 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-
-from iiit_research.models import User
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from iiit_research.models import User,Lab
 
 
 class CreateLabForm(FlaskForm):
@@ -49,6 +49,10 @@ class UpdateAccountForm(FlaskForm):
     confirm_password = PasswordField('confirm password', validators=[EqualTo('password')])
     about_me = TextAreaField('Write About Your Current Research')
     prof_email = StringField('Professor Email Under whom you are currently working')
+    lablist = QuerySelectField('Select Labs',
+                               query_factory=lambda: Lab.query.all(),
+                               get_label="name"
+                               )
     submit = SubmitField('Update')
 
     def validate_username(self, username):
