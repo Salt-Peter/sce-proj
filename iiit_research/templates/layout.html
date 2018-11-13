@@ -37,6 +37,14 @@
                 <!-- Navbar Right Side -->
                 <div class="navbar-nav">
                     <div class="navbar-nav ml-auto">
+                            {% if current_user.is_authenticated %}
+                            {% if current_user.email_verify %}
+                            <!-- <span class="badge badge-pill badge-success">Email Verified</span> -->
+                            <button type="button" class="btn btn-outline-success disabled">Email Verified</button>
+                            {% else %}
+                            <button type="button" class="btn btn-outline-danger disabled">Email Not Verified</button>
+                            {% endif %}
+                            {% endif %}
                         <ul class="nav-item dropdown ml-auto">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

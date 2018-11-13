@@ -7,65 +7,65 @@
                 <div class="media">
                     <ul class="list-group" style="text-align: center">
                         <li class="list-group-item list-group-item-light" style="padding-left: 60px">
-                            <img src="{{ profile_pic }}" alt="" class="img-thumbnail rounded-circle account-img float-left" style="height:150px; width: 150px;">
+                            <img src="{{ profile_pic }}" alt=""
+                                 class="img-thumbnail rounded-circle account-img float-left"
+                                 style="max-height:150px; max-width: 150px;">
                         </li>
                         <div class="media-body">
-                            <li class="list-group-item list-group-item-light">{{current_user.username}}</li>
-                            <li class="list-group-item list-group-item-light">{{current_user.name}}</li>
-                            <li class="list-group-item list-group-item-light">{{current_user.email}}</li>
+                            <li class="list-group-item list-group-item-light">{{ current_user.username }}</li>
+                            <li class="list-group-item list-group-item-light">{{ current_user.name }}</li>
+                            <li class="list-group-item list-group-item-light">{{ current_user.email }}</li>
                             <li class="list-group-item list-group-item-light"><span>Area Of Interest:
                                 {% for interest in current_user.interests %}
                                     <span class="badge badge-primary">{{ interest.name }}</span>
                                 {% endfor %}
                             </span></li>
                             {% if current_user.user_type == 'student' %}
-                            <li class="list-group-item list-group-item-light">Working Under: {{ current_user.prof_id }}</li>
+                                <li class="list-group-item list-group-item-light">Working Under: {{ prof.name }}</li>
                             {% endif %}
-
                         </div>
                     </ul>
                 </div>
             </div>
             <div class="col-md-8">
                 <ul class="nav nav-tabs" role="tablist">
-                    {% if current_user.user_type == 'professor' %}
-                       <li class="nav-item">
-                           <a class="nav-link" data-toggle="tab" href="#menu4">Request</a>
-                       </li>
-                        <li class="nav-item">
-                           <a class="nav-link" data-toggle="tab" href="#menu5">Students</a>
-                       </li>
-                        <li class="nav-item">
-                           <a class="nav-link" data-toggle="tab" href="#menu6">Labs</a>
-                       </li>
-
-                    {% endif %}
-                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#menu3">Posts</a>
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#menu3">Posts</a>
                     </li>
+                    {% if current_user.user_type == 'professor' %}
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#menu6">Labs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#menu4">Pending Approval</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#menu5">Students Under You</a>
+                        </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#menu1">Followers</a>
                     </li>
-                     <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#menu2">Following</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#home">Profile Edit</a>
+                        <a class="nav-link" data-toggle="tab" href="#home">Profile Edit</a>
                     </li>
                 </ul>
 
                 <div class="tab-content">
-                {% if current_user.user_type == 'professor' %}
-                     {% include "profile_components/pendingapproval.html" %}
-                     {% include "profile_components/studentslist.html" %}
-                     {% include "profile_components/labsmember.html" %}
-                 {% endif %}
-                  {% include "profile_components/posts.html" %}
+                    {% if current_user.user_type == 'professor' %}
+                        {% include "profile_components/pendingapproval.html" %}
+                        {% include "profile_components/studentslist.html" %}
+                        {% include "profile_components/labsmember.html" %}
+                    {% endif %}
+                    {% include "profile_components/posts.html" %}
 
                     {% include "profile_components/followers.html" %}
 
                     {% include "profile_components/following.html" %}
-                    <div id="home" class="container tab-pane active"><br>
+                    <div id="home" class="container tab-pane fade"><br>
                         <div class="section">
                             <div class="content-section">
                                 <form action="" method="post" enctype="multipart/form-data">
@@ -98,21 +98,21 @@
                                                 {{ form.username(class="form-control form-control-lg") }}
                                             {% endif %}
                                         </div>
-                                    {% if current_user.user_type == 'student' %}
-                                        <div class="from-group">
-                                            {{ form.prof_email.label(class="form-control-label") }}
-                                            {% if form.prof_email.errors %}
-                                                {{ form.prof_email(class="form-control form-control-lg is-invalid") }}
-                                                <div class="invalid-feedback">
-                                                    {% for error in form.prof_email.errors %}
-                                                        <span>{{ error }}</span>
-                                                    {% endfor %}
-                                                </div>
-                                            {% else %}
-                                                {{ form.prof_email(class="form-control form-control-lg") }}
-                                            {% endif %}
-                                        </div>
-                                    {% endif %}
+                                        {% if current_user.user_type == 'student' %}
+                                            <div class="from-group">
+                                                {{ form.prof_email.label(class="form-control-label") }}
+                                                {% if form.prof_email.errors %}
+                                                    {{ form.prof_email(class="form-control form-control-lg is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.prof_email.errors %}
+                                                            <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.prof_email(class="form-control form-control-lg") }}
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
                                         <div class="from-group">
                                             {{ form.password.label(class="form-control-label") }}
                                             {% if form.password.errors %}
@@ -167,8 +167,6 @@
                                         </div>
 
 
-
-
                                     </fieldset>
                                     <div>
                                         {{ form.submit(class="btn btn-outline-info") }}
@@ -179,7 +177,7 @@
 
                         </div>
                     </div>
-                 </div>
+                </div>
             </div>
         </div>
     </div>

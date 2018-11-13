@@ -7,11 +7,14 @@
                      alt="profile picture"
                      style="height:50px; width:50px;">
             {% endif %}
+            {% include "lab_components/btn_follow.html" %}
 
             <h1 class="font-italic">{{ lab.name }}</h1>
             <p class="font-weight-light article-content" class="text-justify">{{ lab.description }}</p>
         </div>
     </article>
+
+
     {% include "lab_components/lab_members.html" %}
 
 {% endblock content %}

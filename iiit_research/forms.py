@@ -45,7 +45,7 @@ class UpdateAccountForm(FlaskForm):
     picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
     password = PasswordField('Password')
     confirm_password = PasswordField('confirm password', validators=[EqualTo('password')])
-    about_me = TextAreaField('Write About Your Current Research', validators=[DataRequired()])
+    about_me = TextAreaField('Write About Your Current Research')
     prof_email = StringField('Professor Email Under whom you are currently working')
     submit = SubmitField('Update')
 
@@ -62,9 +62,10 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('That email is already in use. Please use a different email.')
 
     def validate_prof_email(self, prof_email):
-        user = User.query.filter_by(email=prof_email.data).first()
-        if not user or user.user_type == 'student':
-            raise ValidationError('No Professor is registered with given email. Please use a different email.')
+        if prof_email.data:
+            user = User.query.filter_by(email=prof_email.data).first()
+            if not user or user.user_type == 'student':
+                raise ValidationError('No Professor is registered with given email. Please use a different email.')
 
 
 class PostForm(FlaskForm):

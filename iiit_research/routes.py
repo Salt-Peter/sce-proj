@@ -3,10 +3,11 @@ import secrets
 
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
 
-from iiit_research import app, db, bcrypt
+from iiit_research import app, db, bcrypt, mail
 from iiit_research.forms import RegistrationForm, CreateLabForm, LoginForm, UpdateAccountForm, PostForm
-from iiit_research.models import User, Post, Subscription, Interest, Lab, PendingApproval
+from iiit_research.models import User, Post,  Subscription, Interest, Lab, PendingApproval
 
 
 @app.route("/home")
@@ -42,22 +43,35 @@ def home():
 
 
 @app.route("/about")
+@login_required
 def about():
     return render_template('about.html', title='About')
 
 
 @app.route("/posts")
+@login_required
 def post():
     posts = Post.query.all()
     return render_template('posts.html', posts=posts, title='Posts')
 
 
 @app.route("/posts/<post_id>")
+@login_required
 def post_detail(post_id):
     """Displays a single post."""
     # TODO: change to use slug instead of id
     post = Post.query.get_or_404(post_id)
     return render_template('post_detail.html', post=post, title=post.title)
+
+
+def send_verify_email(user):
+    print("SENDING EMAIL VERIFICATION LINK")
+    token = user.generate_verification_token()
+    msg = Message('Email Verification', sender='noreply@demo.com', recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+    {url_for('verify_email', token=token, _external=True)}
+    If you did not make this request then simply ignore this email and no changes will be made.'''
+    mail.send(msg)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -79,6 +93,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash(f'Your account is created! You can login Now.', 'success')
+        send_verify_email(user)
         return redirect(url_for('login'))
     # else:
     #     flash(f'Wrong information!', 'danger')
@@ -106,6 +121,7 @@ def login():
 
 
 @app.route("/logout")
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
@@ -120,7 +136,7 @@ def save_pic(form_pic):
     return pic_fn
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
@@ -145,14 +161,15 @@ def account():
             if prof:
                 flag = 0
                 studentlist = PendingApproval.query.filter_by(prof_id=prof.id).all()
-                for prof_id, student_id, relation in studentlist:
-                    if student_id == current_user.id and relation == False:
-                        flag = 1
-                        flash('Your Request is pending with  Professor for Approval!!', 'warning')
-                if flag == 0:
-                    pendingapproval = PendingApproval(prof_id=prof.id, student_id=current_user.id, relation=False)
-                    db.session.add(pendingapproval)
-                    flash('Your Request has been submitted to Professor for Approval!', 'success')
+                if studentlist:
+                    for student in studentlist:
+                        if student.student_id == current_user.id and student.relation == False:
+                            flag = 1
+                            flash('Your Request is pending with  Professor for Approval!!', 'warning')
+                    if flag == 0:
+                        pendingapproval = PendingApproval(prof_id=prof.id, student_id=current_user.id, relation=False)
+                        db.session.add(pendingapproval)
+                        flash('Your Request has been submitted to Professor for Approval!', 'success')
 
         db.session.commit()
         flash('Your information has been updated!', 'success')
@@ -163,21 +180,25 @@ def account():
         form.password.data = ''
         form.confirm_password.data = ''
         form.about_me.data = current_user.about_me
-        if current_user.prof_id:
-            prof = User.query.filter_by(id=current_user.prof_id).first()
-            if prof:
-                form.prof_email.data = prof.email
-        else:
-            form.prof_email.data = ' '
+        form.prof_email.data = ''
 
     # TODO: optimize join
-    query = db.session.query(User.username, User.name)
+    query = db.session.query(User.username, User.name, User.profile_pic)
     join_query = query.join(Subscription, User.id == Subscription.follower)
-    followers = join_query.filter(Subscription.followee == current_user.id).all()
+    followers = join_query.filter((Subscription.followee == current_user.id)
+                                  & (Subscription.followee_type == "user")).all()
 
-    query = db.session.query(User.username, User.name)
-    join_query = query.join(Subscription, User.id == Subscription.followee)
-    following = join_query.filter(Subscription.follower == current_user.id).all()
+    query_user = db.session.query(User.username, User.name, User.profile_pic)
+    join_query = query_user.join(Subscription, User.id == Subscription.followee)
+    following_users = join_query.filter((Subscription.follower == current_user.id)
+                                        & (Subscription.followee_type == "user")).all()
+
+    query_lab = db.session.query(Lab.id, Lab.name, Lab.image)
+    join_query = query_lab.join(Subscription, Lab.id == Subscription.followee)
+    following_labs = join_query.filter((Subscription.follower == current_user.id)
+                                       & (Subscription.followee_type == "lab")).all()
+
+    following = following_users + following_labs
 
     interests = Interest.query.all()
 
@@ -185,11 +206,12 @@ def account():
     join_query = query.join(PendingApproval, User.id == PendingApproval.student_id)
     pending_student_approval_list = join_query.filter(PendingApproval.prof_id == current_user.id).all()
 
+    proff = User.query.filter_by(id=current_user.prof_id).first()
     students = User.query.filter_by(prof_id=current_user.id).all()
     profile_pic = url_for('static', filename='profile_pics/' + current_user.profile_pic)
     return render_template('account.html', title='Account', profile_pic=profile_pic, form=form, followers=followers,
                            following=following, user=current_user, area_of_interests=interests,
-                           pendingStudentApprovalList=pending_student_approval_list, students=students)
+                           pendingStudentApprovalList=pending_student_approval_list, students=students, prof=proff)
 
 
 @app.route("/post/new", methods=['GET', 'POST'])
@@ -216,6 +238,7 @@ def new_post():
 
 
 @app.route("/user/<username>")
+@login_required
 def public_profile(username):
     """ Displays user's public profile """
     user = User.query.filter_by(username=username).first()
@@ -225,13 +248,22 @@ def public_profile(username):
         abort(404)
 
     # TODO: optimize join
-    query = db.session.query(User.username, User.name)
+    query = db.session.query(User.username, User.name, User.profile_pic)
     join_query = query.join(Subscription, User.id == Subscription.follower)
-    followers = join_query.filter(Subscription.followee == user.id).all()
+    followers = join_query.filter((Subscription.followee == user.id)
+                                  & (Subscription.followee_type == "user")).all()
 
-    query = db.session.query(User.username, User.name)
-    join_query = query.join(Subscription, User.id == Subscription.followee)
-    following = join_query.filter(Subscription.follower == user.id).all()
+    query_user = db.session.query(User.username, User.name, User.profile_pic)
+    join_query = query_user.join(Subscription, User.id == Subscription.followee)
+    following_users = join_query.filter((Subscription.follower == user.id)
+                                        & (Subscription.followee_type == "user")).all()
+
+    query_lab = db.session.query(Lab.id, Lab.name, Lab.image)
+    join_query = query_lab.join(Subscription, Lab.id == Subscription.followee)
+    following_labs = join_query.filter((Subscription.follower == user.id)
+                                       & (Subscription.followee_type == "lab")).all()
+
+    following = following_users + following_labs
 
     is_following = False  # specifies whether currently logged in user follows this user
     if current_user.is_authenticated:
@@ -241,21 +273,24 @@ def public_profile(username):
                 and_(Subscription.follower == current_user.id,
                      Subscription.followee == user.id))).scalar()
 
+    prof = User.query.filter_by(id=current_user.prof_id).first()
+
     return render_template('profile.html',
                            user=user,
                            followers=followers, following=following,
-                           is_following=is_following)
+                           is_following=is_following, prof=prof)
 
 
-@app.route('/follow_action/<user_id>/<action>')
+@app.route('/follow_action/<user_id>/<action>/<followee_type>')
 @login_required
-def follow_action(user_id, action):
+def follow_action(user_id, action, followee_type):
     if action == 'follow':
-        row = Subscription(follower=current_user.id, followee=user_id)
+        row = Subscription(follower=current_user.id, followee=user_id, followee_type=followee_type)
         db.session.add(row)
         db.session.commit()
     if action == 'unfollow':
-        row = Subscription.query.filter_by(follower=current_user.id, followee=user_id).first_or_404()
+        row = Subscription.query.filter_by(follower=current_user.id, followee=user_id,
+                                           followee_type=followee_type).first_or_404()
         db.session.delete(row)
         db.session.commit()
 
@@ -296,6 +331,7 @@ def like_action(post_id, action):
 
 
 @app.route('/labs')
+@login_required
 def labs():
     labs = Lab.query.all()
     return render_template('labs.html', labs=labs)
@@ -323,12 +359,37 @@ def create_lab():
     return render_template('create_lab.html', title='New Lab', form=form)
    
 @app.route('/labs/<lab_id>')
+@login_required
 def lab_detail(lab_id):
-    """Displays a single post."""
     lab = Lab.query.get_or_404(lab_id)
-    return render_template('lab_detail.html', lab=lab)
+
+    is_following = False  # specifies whether currently logged in user follows this lab
+    if current_user.is_authenticated:
+        from sqlalchemy import and_
+        is_following = db.session.query(
+            db.exists().where(
+                and_(Subscription.follower == current_user.id,
+                     Subscription.followee == lab.id))).scalar()
+
+    return render_template('lab_detail.html', lab=lab, is_following=is_following)
 
 
 @app.route('/trending')
+@login_required
 def trending():
-    return render_template('trending.html')
+    top_5_posts = Post.query.order_by(Post.like_count.desc()).limit(5)
+    return render_template('trending.html', most_liked_works=top_5_posts)
+
+
+@app.route('/verify/<token>', methods=['GET', 'POST'])
+@login_required
+def verify_email(token):
+    user = User.verify_token(token)
+    if user is None:
+        flash('That is an invalid token', 'warning')
+    else:
+        flash('Your email is verified', 'success')
+        current_user.email_verify = True
+        db.session.commit()
+
+    return render_template('verify.html', title='Email Verification')
