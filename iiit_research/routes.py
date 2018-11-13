@@ -64,7 +64,6 @@ def post_detail(post_id):
 
 
 @app.route("/register", methods=['GET', 'POST'])
-@login_required
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -92,7 +91,6 @@ def register():
 
 
 @app.route("/login", methods=['GET', 'POST'])
-@login_required
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
