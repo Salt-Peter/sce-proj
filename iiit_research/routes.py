@@ -3,8 +3,9 @@ import secrets
 
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
 
-from iiit_research import app, db, bcrypt
+from iiit_research import app, db, bcrypt, mail
 from iiit_research.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from iiit_research.models import User, Post, Subscription, Interest, Lab, PendingApproval
 
@@ -63,6 +64,16 @@ def post_detail(post_id):
     return render_template('post_detail.html', post=post, title=post.title)
 
 
+def send_verify_email(user):
+    print("SENDING EMAIL VERIFICATION LINK")
+    token = user.generate_verification_token()
+    msg = Message('Email Verification', sender='noreply@demo.com', recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+    {url_for('verify_email', token=token, _external=True)}
+    If you did not make this request then simply ignore this email and no changes will be made.'''
+    mail.send(msg)
+
+
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -82,6 +93,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash(f'Your account is created! You can login Now.', 'success')
+        send_verify_email(user)
         return redirect(url_for('login'))
     # else:
     #     flash(f'Wrong information!', 'danger')
@@ -346,3 +358,17 @@ def lab_detail(lab_id):
 def trending():
     top_5_posts = Post.query.order_by(Post.like_count.desc()).limit(5)
     return render_template('trending.html', most_liked_works=top_5_posts)
+
+
+@app.route('/verify/<token>', methods=['GET', 'POST'])
+@login_required
+def verify_email(token):
+    user = User.verify_token(token)
+    if user is None:
+        flash('That is an invalid token', 'warning')
+    else:
+        flash('Your email is verified', 'success')
+        current_user.email_verify = True
+        db.session.commit()
+
+    return render_template('verify.html', title='Email Verification')
