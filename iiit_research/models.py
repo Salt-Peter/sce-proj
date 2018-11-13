@@ -1,8 +1,8 @@
 from datetime import datetime
 
 from flask_login import UserMixin
-from sqlalchemy import CheckConstraint, UniqueConstraint
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from sqlalchemy import CheckConstraint, UniqueConstraint
 
 from iiit_research import db, login_manager, app
 
@@ -81,13 +81,16 @@ class User(db.Model, UserMixin):
 
 class Lab(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.Text)
-    image = db.Column(db.String(20))
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    image = db.Column(db.String(20), nullable=True)
 
     members = db.relationship('User', secondary=LabMembers, lazy='subquery',
                               backref=db.backref('lab', lazy=True))
     posts = db.relationship('Post', backref='author_lab', lazy=True)
+
+    def __repr__(self):
+        return f"Lab('{self.name}','{self.description}', '{self.image}')"
 
 
 class Post(db.Model):

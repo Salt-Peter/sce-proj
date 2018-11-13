@@ -6,7 +6,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 
 from iiit_research import app, db, bcrypt, mail
-from iiit_research.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, SearchForm
+from iiit_research.forms import RegistrationForm, CreateLabForm, LoginForm, UpdateAccountForm, PostForm, SearchForm
 from iiit_research.models import User, Post, Subscription, Interest, Lab, PendingApproval
 
 
@@ -335,6 +335,35 @@ def like_action(post_id, action):
 def labs():
     labs = Lab.query.all()
     return render_template('labs.html', labs=labs)
+
+
+def save_lab_image(form_pic):
+    random_hex = secrets.token_hex(8)
+    fname, fext = os.path.splitext(form_pic.filename)
+    pic_fn = random_hex + fext
+    pic_path = os.path.join(app.root_path, 'static/lab_images/', pic_fn)
+    form_pic.save(pic_path)
+    return pic_fn
+
+
+@app.route('/labs/create', methods=['GET', 'POST'])
+def create_lab():
+    form = CreateLabForm()
+
+    if form.validate_on_submit():
+        print(form.image.data)
+        if form.image.data:
+            picture_file = save_lab_image(form.image.data)
+            lab = Lab(name=form.name.data, description=form.description.data, image=picture_file)
+        else:
+            lab = Lab(name=form.name.data, description=form.description.data, image='default.jpg')
+
+        db.session.add(lab)
+        db.session.commit()
+        flash('Your lab has been created!', 'success')
+        return redirect(url_for('labs'))
+
+    return render_template('create_lab.html', title='New Lab', form=form)
 
 
 @app.route('/labs/<lab_id>')

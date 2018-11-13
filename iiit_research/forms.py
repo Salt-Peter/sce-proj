@@ -1,10 +1,17 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 
 from iiit_research.models import User
+
+
+class CreateLabForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=2, max=30)])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    image = FileField('Update image', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField('Create')
 
 
 class RegistrationForm(FlaskForm):
