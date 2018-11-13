@@ -1,0 +1,33 @@
+
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Search</legend>
+                
+                    <div class="form-group">
+                        Select user type:-<br>
+                        <input type="radio" name="user_type" value="student" >Student
+                        <br/>
+                        <input type="radio" name="user_type" value="professor" checked>Professor
+                        <br/>
+                        <input type="radio" name="user_type" value="lab" >Lab
+                        <br/>
+                        <!-- <input type="radio" name="user_type" value=""> -->
+                    </div>
+                    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                    {% if page_num %}
+                        {% if posts.page == page_num %}
+                            <a class="active" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                        {% else %}
+                            <a href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                        {% endif %}
+                    {% else %}
+                        ...
+                    {% endif %}
+                {% endfor %}
+{% endblock content %}
+
+
