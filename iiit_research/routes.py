@@ -16,7 +16,8 @@ from iiit_research.models import User, Post, Subscription, Interest, Lab, Pendin
 def home():
     user_query = db.session.query(User.id, User.username, User.name)
     join_on_user_query = user_query.join(Subscription, User.id == Subscription.followee)
-    user_following = join_on_user_query.filter(Subscription.follower == current_user.id).all()
+    user_following = join_on_user_query.filter((Subscription.follower == current_user.id)
+                                               & (Subscription.followee_type == "user")).all()
     # FIXME: this is gonna get real ugly real soon.
     user_following_ids = []
     for user in user_following:
@@ -24,7 +25,8 @@ def home():
 
     lab_query = db.session.query(Lab.id, Lab.name)
     join_on_lab_query = lab_query.join(Subscription, Lab.id == Subscription.followee)
-    lab_following = join_on_lab_query.filter(Subscription.follower == current_user.id).all()
+    lab_following = join_on_lab_query.filter((Subscription.follower == current_user.id)
+                                             & (Subscription.followee_type == "lab")).all()
     lab_following_ids = []
     for lab in lab_following:
         lab_following_ids.append(lab.id)
