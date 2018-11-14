@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-8">
                 <div>
-                    <article class="media content-section">
+                    <article class="media content-section" style="min-height:267px">
                         <div class="media-body">
                             {% if lab.image %}
                                 <img class="rounded-circle"
@@ -30,26 +30,28 @@
                         </div>
                     </article>
                 </div>
-                <div class="row">
-                    <article class="media content-section">
-                        <div class="media-body">
-                            <h3>Posts:</h3>
-                            <hr/>
-                            <div class="list-group">
-                             <div class="scroll">
-                                {% for post in lab.posts %}
-                                    <p>
-                                        <a href="{{ url_for('post_detail',post_id=post.id) }}"
-                                           class="list-group-item list-group-item-action">
-                                            {{ post.title[:15] }}
-                                        </a>
-                                    </p>
-                                {% endfor %}
-                             </div>
+                {% if lab.posts %}
+                    <div class="row">
+                        <article class="media content-section">
+                            <div class="media-body">
+                                <h3>Posts:</h3>
+                                <hr/>
+                                <div class="list-group">
+                                    <div class="scroll">
+                                        {% for post in lab.posts %}
+                                            <p>
+                                                <a href="{{ url_for('post_detail',post_id=post.id) }}"
+                                                   class="list-group-item list-group-item-action">
+                                                    {{ post.title[:15] }}
+                                                </a>
+                                            </p>
+                                        {% endfor %}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </article>
-                </div>
+                        </article>
+                    </div>
+                {% endif %}
             </div>
         </div>
 
