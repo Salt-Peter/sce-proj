@@ -75,13 +75,18 @@ def send_verify_email(user):
     mail.send(msg)
 
 
-def get_list_from_aoi(aois):
+def get_list_from_aoi(form_interests):
     interests = []
-    for aoi in aois:
+    for aoi in form_interests:
         i = Interest.query.get(aoi)
         if not i:
-            i = Interest(name=aoi)
-        interests.append(i)
+            if aoi:
+                for item in aoi.strip(", ").split(","):
+                    i = Interest(name=item)
+                    interests.append(i)
+        else:
+            interests.append(i)
+
     return interests
 
 
