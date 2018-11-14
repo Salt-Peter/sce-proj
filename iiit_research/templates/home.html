@@ -30,16 +30,22 @@
             </div>
         </article>
     {% endfor %}
-    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-        {% if page_num %}
-            {% if posts.page == page_num %}
-                <a class="active" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+    <ul class="pagination">
+        {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if page_num %}
+                {% if posts.page == page_num %}
+                    <li class="page-item active">
+                        <a class="page-link"
+                           href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a></li>
+                {% endif %}
             {% else %}
-                <a href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                ...
             {% endif %}
-        {% else %}
-            ...
-        {% endif %}
-    {% endfor %}
+        {% endfor %}
+    </ul>
 {% endblock content %}
 {#TODO: https://getbootstrap.com/docs/4.1/components/pagination/#}
+
+

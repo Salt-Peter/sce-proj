@@ -94,3 +94,13 @@ a.article-title:hover {
     overflow-y: hidden;
     flex-wrap: nowrap;
 }
+
+.scroll {
+  height:178px;
+  overflow-y: scroll;
+}
+
+.scroll-trending{
+    height:395px;
+  overflow-y: scroll;
+}

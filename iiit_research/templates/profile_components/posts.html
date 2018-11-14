@@ -1,8 +1,15 @@
-<div id="menu3" class="container tab-pane active">
+<div id="menu3" class="container tab-pane active" style="margin-top: 30px">
     {#Gets a lists of posts created by the user whose profile is being viewed#}
-    <ul>
-        {% for post in user.posts %}
-            <li><a href="{{ url_for('post_detail',post_id=post.id) }}">{{ post.title }}</a></li>
-        {% endfor %}
-    </ul>
+
+    {% for post in user.posts %}
+        <article class="media content-section">
+            <div class="media-body">
+                <h4><a href="{{ url_for('post_detail',post_id=post.id) }}">{{ post.title }}</a>
+                </h4></div>
+            <div class="article-metadata">
+               <small><span class="label label-info">{{ post.created_at.strftime('%Y-%m-%d') }}</span></small>
+            </div>
+        </article>
+    {% endfor %}
+
 </div>

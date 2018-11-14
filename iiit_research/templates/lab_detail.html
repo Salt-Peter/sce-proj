@@ -1,28 +1,60 @@
 {% extends "layout.html" %}
 {% block content %}
-    <article class="media content-section">
-        <div class="media-body">
-            {% if lab.image %}
-                <img class="rounded-circle" src="{{ url_for('static', filename='lab_images/'+ lab.image) }}"
-                     alt="profile picture"
-                     style="height:50px; width:50px;">
-            {% endif %}
-            {% include "lab_components/btn_follow.html" %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div>
+                    <article class="media content-section">
+                        <div class="media-body">
+                            {% if lab.image %}
+                                <img class="rounded-circle"
+                                     src="{{ url_for('static', filename='lab_images/'+ lab.image) }}"
+                                     alt="profile picture"
+                                     style="height:50px; width:50px;">
+                            {% endif %}
+                            {% include "lab_components/btn_follow.html" %}
 
-            <h1 class="font-italic">{{ lab.name }}</h1>
-            <p class="font-weight-light article-content" class="text-justify">{{ lab.description }}</p>
+                            <h1 class="font-italic">{{ lab.name }}</h1>
+                            <p class="font-weight-light article-content" class="text-justify">{{ lab.description }}</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <article class="media content-section">
+                        <div class="media-body">
+
+                            {% include "lab_components/lab_members.html" %}
+
+                        </div>
+                    </article>
+                </div>
+                <div class="row">
+                    <article class="media content-section">
+                        <div class="media-body">
+                            <h3>Posts:</h3>
+                            <hr/>
+                            <div class="list-group">
+                             <div class="scroll">
+                                {% for post in lab.posts %}
+                                    <p>
+                                        <a href="{{ url_for('post_detail',post_id=post.id) }}"
+                                           class="list-group-item list-group-item-action">
+                                            {{ post.title[:15] }}
+                                        </a>
+                                    </p>
+                                {% endfor %}
+                             </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
         </div>
-    </article>
 
-
-    {% include "lab_components/lab_members.html" %}
-    {% for post in lab.posts %}
-        <p>
-            <a href="{{ url_for('post_detail',post_id=post.id) }}">
-                {{ post.title }}
-            </a>
-        </p>
-    {% endfor %}
+    </div>
 
 
 {% endblock content %}
+
