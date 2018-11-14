@@ -16,5 +16,13 @@
 
 
     {% include "lab_components/lab_members.html" %}
+    {% for post in lab.posts %}
+        <p>
+            <a href="{{ url_for('post_detail',post_id=post.id) }}">
+                {{ post.title }}
+            </a>
+        </p>
+    {% endfor %}
+
 
 {% endblock content %}
