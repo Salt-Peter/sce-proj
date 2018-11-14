@@ -2,9 +2,10 @@ from flask_login import current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from iiit_research.models import User,Lab
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+
+from iiit_research.models import User, Lab
 
 
 class CreateLabForm(FlaskForm):
@@ -51,7 +52,8 @@ class UpdateAccountForm(FlaskForm):
     prof_email = StringField('Professor Email Under whom you are currently working')
     lablist = QuerySelectField('Select Labs',
                                query_factory=lambda: Lab.query.all(),
-                               get_label="name"
+                               get_label="name",
+                               allow_blank=True
                                )
     submit = SubmitField('Update')
 
@@ -86,6 +88,7 @@ class SearchForm(FlaskForm):
     query = StringField('Query', validators=[DataRequired()])
     search_for = StringField('Search For', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
