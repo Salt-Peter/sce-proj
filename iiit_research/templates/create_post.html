@@ -22,15 +22,18 @@
                 {% if current_user.user_type == "professor" %}
                     Post as:-
                     <div class="form-group">
-                        <input type="radio" name="post_as"
-                               value="{{ current_user.username }}"
-                               checked>{{ current_user.username }}
-                        <br/>
-                        {% for lab in current_user.lab %}
-                            <input type="radio" name="post_as"
-                                   value="{{ lab.id }}">Member of {{ lab.name }}
-                        {% endfor %}
+                        <select class="form-control form-control-lg" name="post_as">
+                            <option value="{{ current_user.username }}" selected>
+                                {{ current_user.username }}
+                            </option>
 
+                            <br/>
+                            {% for lab in current_user.lab %}
+                                <option value="{{ lab.id }}">
+                                    Member of {{ lab.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
                     </div>
                 {% endif %}
 
