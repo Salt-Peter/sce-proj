@@ -97,5 +97,5 @@ a.article-title:hover {
 
 .scroll {
   height:178px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
