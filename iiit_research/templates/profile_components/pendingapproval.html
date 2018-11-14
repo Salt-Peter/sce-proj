@@ -1,22 +1,18 @@
-<div id="menu4" class="container tab-pane fade">
-    <div class="table-responsive">
-        <table class="table table-hover" style="width: 70%">
-            <tbody>
+<div id="menu4" class="container tab-pane fade" style="margin-top: 30px">
+    <div class="list-group">
             {% for user in pendingStudentApprovalList %}
-                <tr>
-                    <td><img src="{{ url_for('static', filename='profile_pics/'+ user.profile_pic ) }}" alt=""
+                <div class="list-group-item list-group-item-action" style="margin-bottom: 10px">
+                    <img src="{{ url_for('static', filename='profile_pics/'+ user.profile_pic ) }}" alt=""
                              class="img-thumbnail rounded-circle account-img float-left"
-                             style="height:70px; width: 70px;"></td>
-                    <td><a href="{{ url_for('public_profile',username=user.username) }}">{{ user.name }}</a></td>
-                    <td><a href="{{ url_for('approve_request', user_id=user.id, action='accept') }}"
+                         style="height:70px; width: 70px;"><br/>
+                <a href="{{ url_for('public_profile',username=user.username) }}">{{ user.name }}</a><br/>
+                    <a href="{{ url_for('approve_request', user_id=user.id, action='accept') }}"
                            class="btn btn-outline-success">
-                        Approve </a></td>
-                    <td><a href="{{ url_for('approve_request', user_id=user.id, action='delete') }}"
+                        Approve </a>
+                    <a href="{{ url_for('approve_request', user_id=user.id, action='delete') }}"
                            class="btn btn-outline-success">
-                        Delete </a></td>
-                </tr>
+                        Delete </a>
+                </div>
             {% endfor %}
-            </tbody>
-        </table>
     </div>
 </div>
