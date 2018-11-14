@@ -99,8 +99,3 @@ a.article-title:hover {
   height:178px;
   overflow-y: scroll;
 }
-
-.scroll-trending{
-    height:395px;
-  overflow-y: scroll;
-}

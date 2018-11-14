@@ -1,7 +1,7 @@
 <h3>Most followed users</h3>
 <hr/>
 <div class="list-group">
-<div class="scroll-trending">
+<div class="scroll">
 {% for followee in most_followed %}
     <p>
         <a href="{{ url_for('public_profile', username=followee.username) }}" class="list-group-item list-group-item-action">{{ followee.name }}</a>
