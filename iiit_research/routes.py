@@ -222,22 +222,33 @@ def account():
                            pendingStudentApprovalList=pending_student_approval_list, students=students, prof=proff)
 
 
+def save_file(form_file):
+    random_hex = secrets.token_hex(8)
+    fname, fext = os.path.splitext(form_file.filename)
+    file_fn = random_hex + fext
+    file_path = os.path.join(app.root_path, 'static/files/', file_fn)
+    form_file.save(file_path)
+    return file_fn
+
+
 @app.route("/post/new", methods=['GET', 'POST'])
 @login_required
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-
+        data_file=None
+        if form.file.data:
+            data_file = save_file(form.file.data)
         if form.post_as.data:  # current user is a professor
             if form.post_as.data == current_user.username:  # professor is posting as himself
                 author = current_user
-                post = Post(title=form.title.data, content=form.content.data, author=author, author_type="user")
+                post = Post(title=form.title.data, content=form.content.data, author=author, author_type="user", file=data_file)
             else:
                 author = Lab.query.get(form.post_as.data)
-                post = Post(title=form.title.data, content=form.content.data, lab_author=author, author_type="lab")
+                post = Post(title=form.title.data, content=form.content.data, lab_author=author, author_type="lab", file=data_file)
         else:  # current user is a student
-            post = Post(title=form.title.data, content=form.content.data, author=current_user, author_type="user")
-
+            post = Post(title=form.title.data, content=form.content.data, author=current_user, author_type="user", file=data_file)
+        print(data_file)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')

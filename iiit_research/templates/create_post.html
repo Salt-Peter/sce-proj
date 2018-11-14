@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <div>
-        <form action="" method="post">
+        <form action="" method="post" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">New Post</legend>
@@ -48,6 +48,15 @@
                         {{ form.content(class="form-control form-control-lg") }}
                     {% endif %}
                     <!-- {{ form.content(class="form-control form-control-lg") }} -->
+                </div>
+                <div class="from-group">
+                    {{ form.file.label() }}
+                    {{ form.file(class="form-control-file") }}
+                    {% if form.file.errors %}
+                        {% for error in form.file.errors %}
+                            <span class="text-danger">{{ error }}</span></br>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </fieldset>
             <div>

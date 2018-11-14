@@ -97,6 +97,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
+    file = db.Column(db.String(20), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     likes = db.relationship('Like', backref='post', lazy=True)
     like_count = db.Column(db.Integer, default=0)

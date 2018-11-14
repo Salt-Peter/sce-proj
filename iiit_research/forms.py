@@ -78,6 +78,7 @@ class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
     post_as = StringField('Post as')
+    file = FileField('Upload File', validators=[FileAllowed(['pdf'])])
     submit = SubmitField('Post')
 
 
