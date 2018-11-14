@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-<div>
+<div class="content-section">
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Join Today</legend>
+            <legend class="border-bottom mb-4">Register</legend>
             <div class="from-group">
                 {{ form.name.label(class="form-control-label") }}
                 {% if form.name.errors %}
@@ -58,7 +58,6 @@
                 {% else %}
                     {{ form.password(class="form-control form-control-lg") }}
                 {% endif %}
-                <!-- {{ form.password(class="form-control form-control-lg") }} -->
             </div>
             <div class="from-group">
                 {{ form.confirm_password.label(class="form-control-label") }}
@@ -74,6 +73,15 @@
                 {% endif %}
                 <!-- {{ form.confirm_password(class="form-control form-control-lg") }} -->
             </div>
+            <div class="form-group">
+                    {% include "components/area_of_interests.html" %}
+                </div>
+                <div class="form-group">
+                    Select user type:-<br>
+                    <input type="radio" name="user_type" value="student" checked>Student
+                    <br/>
+                    <input type="radio" name="user_type" value="professor">Professor
+                </div>
         </fieldset>
         <div>
             {{ form.submit(class="btn btn-outline-info") }}
@@ -85,4 +93,6 @@
         Already have an account? <a class="ml-2" href="{{ url_for('login') }}">Sign In</a>
     </small>
 </div>
-{% endblock content %}
+    {% endblock content %}
+
+

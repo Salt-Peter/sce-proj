@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="section">
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Search</legend>
+
+                Search for:-
+                <div class="form-group">
+                    <input type="radio" name="search_for"
+                           value="student"
+                           checked>Student
+                    <br/>
+                    <input type="radio" name="search_for"
+                           value="professor">Professor
+                    <br/>
+                    <input type="radio" name="search_for"
+                           value="lab">Lab
+                    <br/>
+                    <input type="radio" name="search_for"
+                           value="area_of_interest">Find users with this area of interest
+                    <br/>
+                </div>
+
+                <div class="from-group">
+                    {{ form.query.label(class="form-control-label") }}
+                    {% if form.query.errors %}
+                        {{ form.query(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.query.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.query(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div>
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+        {% if results %}
+            Search results:-<br>
+            {% for result in results %}
+                {% if result.username %}
+                    <a href="{{ url_for('public_profile',username=result.username) }}">{{ result.name }}
+                    </a><br/>
+                {% else %}
+                    <a href="{{ url_for('lab_detail',lab_id=result.id) }}">{{ result.name }}
+                    </a><br/>
+                {% endif %}
+
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock content %}

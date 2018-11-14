@@ -1,0 +1,24 @@
+<h1>Most liked research works</h1>
+<hr/>
+{% for post in most_liked_works %}
+    <div class="media-body">
+        <h2>
+            <a class="article-title" href="{{ url_for('post_detail', post_id=post.id) }}">
+                {{ post.title }}
+            </a>
+        </h2>
+        <div class="article-metadata">
+            {% if post.author.username %}
+                <a href="{{ url_for('public_profile', username=post.author.username) }}">
+                    by {{ post.author.name }}
+                </a>
+            {% else %}
+                <a href="{{ url_for('lab_detail', lab_id=post.author_lab.id) }}">
+                    by {{ post.author_lab.name }}
+                </a>
+            {% endif %}
+            <small class="text-muted">on {{ post.created_at.strftime('%Y-%m-%d') }}</small>
+            <small>{{ post.like_count }} likes</small>
+        </div>
+    </div>
+{% endfor %}

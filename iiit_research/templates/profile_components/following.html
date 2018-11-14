@@ -1,7 +1,33 @@
-<div id="menu2" class="container tab-pane fade"><br>
-    <ul>
-        {% for username, name in following %}
-            <li><a href="{{ url_for('public_profile',username=username) }}">{{ name }}</a></li>
-        {% endfor %}
-    </ul>
+<div id="menu2" class="container tab-pane fade" style="margin-top: 30px">
+    <div class="table-responsive">
+        <table class="table table-hover" style="width: 70%">
+            <tbody>
+            {% for following in following %}
+                <tr>
+                    {% if following.username %}
+                        <td>
+                            <img src="{{ url_for('static', filename='profile_pics/'+ following.profile_pic ) }}" alt=""
+                                 class="img-thumbnail rounded-circle account-img float-left"
+                                 style="height:70px; width: 70px;">
+                        </td>
+                        <td>
+                            <a href="{{ url_for('public_profile',username=following.username) }}">{{ following.name }}</a>
+                        </td>
+                    {% else %}
+                        {% if following.image %}
+                            <td>
+                                <img src="{{ url_for('static', filename='lab_images/'+ following.image ) }}" alt=""
+                                     class="img-thumbnail rounded-circle account-img float-left"
+                                     style="height:70px; width: 70px;">
+                            </td>
+                        {% endif %}
+                        <td>
+                            <a href="{{ url_for('lab_detail',lab_id=following.id) }}">{{ following.name }}</a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>

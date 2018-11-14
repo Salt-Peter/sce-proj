@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% for lab in labs %}
+        <article class="media content-section">
+            <div class="media-body">
+
+                <h1>
+                    <a class="article-title" href="{{ url_for('lab_detail',lab_id=lab.id) }}">{{ lab.name }}</a>
+                </h1>
+                <ul>
+                    {% for member in lab.members %}
+                        <li>
+                            <a href="{{ url_for('public_profile',username=member.username) }}">
+                                {{ member.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

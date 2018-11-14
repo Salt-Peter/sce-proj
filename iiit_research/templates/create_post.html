@@ -1,43 +1,70 @@
 {% extends "layout.html" %}
 {% block content %}
-<div>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">New Post</legend>
-            <div class="from-group">
-                {{ form.title.label(class="form-control-label") }}
-                {% if form.title.errors %}
-                    {{ form.title(class="form-control form-control-lg is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.title.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
+    <div>
+        <form action="" method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">New Post</legend>
+                <div class="from-group">
+                    {{ form.title.label(class="form-control-label") }}
+                    {% if form.title.errors %}
+                        {{ form.title(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.title(class="form-control form-control-lg") }}
+                    {% endif %}
+                    <!-- {{ form.title(class="form-control form-control-lg") }} -->
+                </div>
+                {% if current_user.user_type == "professor" %}
+                    Post as:-
+                    <div class="form-group">
+                        <select class="form-control form-control-lg" name="post_as">
+                            <option value="{{ current_user.username }}" selected>
+                                {{ current_user.username }}
+                            </option>
+
+                            <br/>
+                            {% for lab in current_user.lab %}
+                                <option value="{{ lab.id }}">
+                                    Member of {{ lab.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
                     </div>
-                {% else %}
-                    {{ form.title(class="form-control form-control-lg") }}
                 {% endif %}
-                <!-- {{ form.title(class="form-control form-control-lg") }} -->
-            </div>
-            <div class="from-group">
-                {{ form.content.label(class="form-control-label") }}
-                <!-- {{ form.content.label(class="form-control-label") }} -->
-                {% if form.content.errors %}
-                    {{ form.content(class="form-control form-control-lg is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.content.errors %}
-                            <span>{{ error }}</span>
+
+                <div class="from-group">
+                    {{ form.content.label(class="form-control-label") }}
+                    <!-- {{ form.content.label(class="form-control-label") }} -->
+                    {% if form.content.errors %}
+                        {{ form.content(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.content.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.content(class="form-control form-control-lg") }}
+                    {% endif %}
+                    <!-- {{ form.content(class="form-control form-control-lg") }} -->
+                </div>
+                <div class="from-group">
+                    {{ form.file.label() }}
+                    {{ form.file(class="form-control-file") }}
+                    {% if form.file.errors %}
+                        {% for error in form.file.errors %}
+                            <span class="text-danger">{{ error }}</span></br>
                         {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.content(class="form-control form-control-lg") }}
-                {% endif %}
-                <!-- {{ form.content(class="form-control form-control-lg") }} -->
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div>
+                {{ form.submit(class="btn btn-outline-info") }}
             </div>
-        </fieldset>
-        <div>
-            {{ form.submit(class="btn btn-outline-info") }}
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 {% endblock content %}

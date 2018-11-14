@@ -9,3 +9,4 @@ pip install -r requirements.txt
 ```bash
 ./script.sh
 ```
+EMAIL_USER="iiitresearchpage@gmail.com" EMAIL_PASS='iiit@$#@!' FLASK_APP=iiit_research FLASK_ENV=development flask run
