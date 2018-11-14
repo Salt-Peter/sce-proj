@@ -1,15 +1,24 @@
 {% extends "layout.html" %}
 {% block content %}
-    <article class="media content-section">
-        <div class="media-body">
-            {% include "trending_components/most_liked_research_work.html" %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <article class="media content-section">
+                    <div class="media-body">
+                        {% include "trending_components/most_liked_research_work.html" %}
+                    </div>
+                </article>
+            </div>
+            <div class="col-md-4">
+                <article class="media content-section">
+                    <div class="media-body">
+                        {% include "trending_components/most_followed_prof.html" %}
+                    </div>
+                </article>
+            </div>
         </div>
-    </article>
-
-    <article class="media content-section">
-        <div class="media-body">
-            {% include "trending_components/most_followed_prof.html" %}
-        </div>
-    </article>
+    </div>
 
 {% endblock content %}
+
+

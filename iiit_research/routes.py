@@ -38,7 +38,7 @@ def home():
     posts = Post.query.filter(((Post.author_type == "lab") & (Post.lab_id.in_(lab_following_ids)))
                               | ((Post.author_type == "user") & (Post.author_id.in_(user_following_ids)))).order_by(
         Post.created_at.desc()).paginate(page=page,
-                                         per_page=10)
+                                         per_page=5)
 
     return render_template('home.html', title='Home', posts=posts)
 

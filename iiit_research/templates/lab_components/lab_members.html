@@ -1,9 +1,11 @@
-Lab Members:-
-
-<ul>
+<h3>Lab Members:</h3>
+<hr/>
+<div class="list-group">
+<div class="scroll">
     {% for member in lab.members %}
-        <li>
-            <a href="{{ url_for('public_profile',username=member.username ) }}">{{ member.name }}</a>
-        </li>
+        <p>
+            <a href="{{ url_for('public_profile',username=member.username ) }}" class="list-group-item list-group-item-action">{{ member.name }}</a>
+        </p>
     {% endfor %}
-</ul>
+</div>
+</div>
