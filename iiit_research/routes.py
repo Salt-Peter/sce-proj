@@ -7,7 +7,7 @@ from flask_mail import Message
 
 from iiit_research import app, db, bcrypt, mail
 
-from iiit_research.forms import RegistrationForm, CreateLabForm, LoginForm, UpdateAccountForm, PostForm, SearchForm
+from iiit_research.forms import RegistrationForm, CreateLabForm, LoginForm, UpdateAccountForm, PostForm, SearchForm, RequestResetForm, ResetPasswordForm
 from iiit_research.models import User, Post, Subscription, Interest, Lab, PendingApproval,LabMembers
 
 
@@ -70,7 +70,7 @@ def send_verify_email(user):
     print("SENDING EMAIL VERIFICATION LINK")
     token = user.generate_verification_token()
     msg = Message('Email Verification', sender='noreply@demo.com', recipients=[user.email])
-    msg.body = f'''To reset your password, visit the following link:
+    msg.body = f'''To verify your email address, visit the following link:
     {url_for('verify_email', token=token, _external=True)}
     If you did not make this request then simply ignore this email and no changes will be made.'''
     mail.send(msg)
@@ -448,3 +448,44 @@ def search():
             for interest in interests:
                 results.update(interest.users)
     return render_template('search.html', title='Search', form=form, results=results, result_type=form.search_for.data)
+
+def send_reset_email(user):
+    print("SENDING PASSWORD RESET LINK")
+    token = user.generate_verification_token()
+    msg = Message('Password Reset', sender='noreply@demo.com', recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+    {url_for('reset_token', token=token, _external=True)}
+    If you did not make this request then simply ignore this email and no changes will be made.'''
+    mail.send(msg)
+
+
+@app.route("/reset_password", methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('An email has been sent with instructions to reset your password.', 'info')
+        return redirect(url_for('login'))
+    return render_template('reset_request.html', title='Reset Password', form=form)
+
+
+@app.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    user = User.verify_token(token)
+    if user is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash('Your password has been updated! You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_token.html', title='Reset Password', form=form)
+
