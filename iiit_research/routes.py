@@ -6,10 +6,9 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 
 from iiit_research import app, db, bcrypt, mail
-
-from iiit_research.forms import RegistrationForm, CreateLabForm, LoginForm, UpdateAccountForm, PostForm, SearchForm, RequestResetForm, ResetPasswordForm
-from iiit_research.models import User, Post, Subscription, Interest, Lab, PendingApproval,LabMembers
-
+from iiit_research.forms import RegistrationForm, CreateLabForm, LoginForm, UpdateAccountForm, PostForm, SearchForm, \
+    RequestResetForm, ResetPasswordForm
+from iiit_research.models import User, Post, Subscription, Interest, Lab, PendingApproval
 
 
 @app.route("/home")
@@ -236,18 +235,21 @@ def save_file(form_file):
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        data_file=None
+        data_file = None
         if form.file.data:
             data_file = save_file(form.file.data)
         if form.post_as.data:  # current user is a professor
             if form.post_as.data == current_user.username:  # professor is posting as himself
                 author = current_user
-                post = Post(title=form.title.data, content=form.content.data, author=author, author_type="user", file=data_file)
+                post = Post(title=form.title.data, content=form.content.data, author=author, author_type="user",
+                            file=data_file)
             else:
                 author = Lab.query.get(form.post_as.data)
-                post = Post(title=form.title.data, content=form.content.data, lab_author=author, author_type="lab", file=data_file)
+                post = Post(title=form.title.data, content=form.content.data, author_lab=author, author_type="lab",
+                            file=data_file)
         else:  # current user is a student
-            post = Post(title=form.title.data, content=form.content.data, author=current_user, author_type="user", file=data_file)
+            post = Post(title=form.title.data, content=form.content.data, author=current_user, author_type="user",
+                        file=data_file)
         print(data_file)
         db.session.add(post)
         db.session.commit()
@@ -460,6 +462,7 @@ def search():
                 results.update(interest.users)
     return render_template('search.html', title='Search', form=form, results=results, result_type=form.search_for.data)
 
+
 def send_reset_email(user):
     print("SENDING PASSWORD RESET LINK")
     token = user.generate_verification_token()
@@ -499,4 +502,3 @@ def reset_token(token):
         flash('Your password has been updated! You are now able to log in', 'success')
         return redirect(url_for('login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
-
