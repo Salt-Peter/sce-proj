@@ -1,12 +1,13 @@
 <p>Area of interests</p>
 {% for aoi in area_of_interests %}
-     {% if current_user.is_authenticated %}
-          {% if aoi in user.interests %}
-               <input type="checkbox" name="aoi" value="{{ aoi.id }}" checked> {{ aoi.name }}<br>
-          {% else  %}
-               <input type="checkbox" name="aoi" value="{{ aoi.id }}"> {{ aoi.name }}<br>
-          {% endif %}
+    {% if current_user.is_authenticated %}
+        {% if aoi in user.interests %}
+            <input type="checkbox" name="aoi" value="{{ aoi.id }}" checked> {{ aoi.name }}<br>
+        {% else %}
+            <input type="checkbox" name="aoi" value="{{ aoi.id }}"> {{ aoi.name }}<br>
+        {% endif %}
     {% else %}
-       <input type="checkbox" name="aoi" value="{{ aoi.id }}"> {{ aoi.name }}<br>
+        <input type="checkbox" name="aoi" value="{{ aoi.id }}"> {{ aoi.name }}<br>
     {% endif %}
 {% endfor %}
+<input type="text" name="aoi" placeholder="Add a custom interest"><br>

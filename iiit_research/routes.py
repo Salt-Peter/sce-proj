@@ -75,6 +75,16 @@ def send_verify_email(user):
     mail.send(msg)
 
 
+def get_list_from_aoi(aois):
+    interests = []
+    for aoi in aois:
+        i = Interest.query.get(aoi)
+        if not i:
+            i = Interest(name=aoi)
+        interests.append(i)
+    return interests
+
+
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -82,10 +92,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-
-        interests = []
-        for i in request.form.getlist('aoi'):
-            interests.append(Interest.query.get(i))
+        interests = get_list_from_aoi(request.form.getlist('aoi'))
 
         user = User(name=form.name.data, username=form.username.data,
                     email=form.email.data, password=hashed_password,
@@ -151,9 +158,7 @@ def account():
         if form.password.data:
             hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
             current_user.password = hashed_password
-        interests = []
-        for i in request.form.getlist('aoi'):
-            interests.append(Interest.query.get(i))
+        interests = get_list_from_aoi(request.form.getlist('aoi'))
         current_user.interests = interests
         if form.about_me.data:
             current_user.about_me = form.about_me.data
