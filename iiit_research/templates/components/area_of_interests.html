@@ -3,10 +3,10 @@
     {% for aoi in area_of_interests %}
         {% if current_user.is_authenticated and aoi in user.interests %}
             {#            private profile page         #}
-            <option value="{{ aoi.id }}" selected> {{ aoi.name }}</option>
+            <option value="{{ aoi.name }}" selected> {{ aoi.name }}</option>
         {% else %}
             {#            Register page         #}
-            <option value="{{ aoi.id }}"> {{ aoi.name }}</option>
+            <option value="{{ aoi.name }}"> {{ aoi.name }}</option>
         {% endif %}
     {% endfor %}
 </select>

@@ -76,18 +76,21 @@ def send_verify_email(user):
 
 
 def get_list_from_aoi(form_interests):
-    interests = []
+    interests = set()
     for aoi in form_interests:
-        i = Interest.query.get(aoi)
+        i = Interest.query.filter(Interest.name == aoi).first()
         if not i:
             if aoi:
                 for item in aoi.strip(", ").split(","):
-                    i = Interest(name=item)
-                    interests.append(i)
+                    item.strip(", ")
+                    i = Interest.query.filter(Interest.name == item).first()
+                    if not i:
+                        i = Interest(name=item)
+                    interests.add(i)
         else:
-            interests.append(i)
+            interests.add(i)
 
-    return interests
+    return list(interests)
 
 
 @app.route("/register", methods=['GET', 'POST'])
