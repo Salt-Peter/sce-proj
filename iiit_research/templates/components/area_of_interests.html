@@ -1,12 +1,16 @@
 <p>Area of interests</p>
-{% for aoi in area_of_interests %}
-     {% if current_user.is_authenticated %}
-          {% if aoi in user.interests %}
-               <input type="checkbox" name="aoi" value="{{ aoi.id }}" checked> {{ aoi.name }}<br>
-          {% else  %}
-               <input type="checkbox" name="aoi" value="{{ aoi.id }}"> {{ aoi.name }}<br>
-          {% endif %}
-    {% else %}
-       <input type="checkbox" name="aoi" value="{{ aoi.id }}"> {{ aoi.name }}<br>
-    {% endif %}
-{% endfor %}
+<select class="form-control form-control-lg" name="aoi" multiple="multiple">
+    {% for aoi in area_of_interests %}
+        {% if current_user.is_authenticated and aoi in user.interests %}
+            {#            private profile page         #}
+            <option value="{{ aoi.name }}" selected> {{ aoi.name }}</option>
+        {% else %}
+            {#            Register page         #}
+            <option value="{{ aoi.name }}"> {{ aoi.name }}</option>
+        {% endif %}
+    {% endfor %}
+</select>
+<br>
+<input type="text" name="aoi"
+       placeholder="Add custom interests (comma separated)"
+       class="form-control form-control-lg">

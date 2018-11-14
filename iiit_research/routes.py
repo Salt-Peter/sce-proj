@@ -38,7 +38,7 @@ def home():
     posts = Post.query.filter(((Post.author_type == "lab") & (Post.lab_id.in_(lab_following_ids)))
                               | ((Post.author_type == "user") & (Post.author_id.in_(user_following_ids)))).order_by(
         Post.created_at.desc()).paginate(page=page,
-                                         per_page=10)
+                                         per_page=5)
 
     return render_template('home.html', title='Home', posts=posts)
 
@@ -75,6 +75,24 @@ def send_verify_email(user):
     mail.send(msg)
 
 
+def get_list_from_aoi(form_interests):
+    interests = set()
+    for aoi in form_interests:
+        i = Interest.query.filter(Interest.name == aoi).first()
+        if not i:
+            if aoi:
+                for item in aoi.strip(", ").split(","):
+                    item.strip(", ")
+                    i = Interest.query.filter(Interest.name == item).first()
+                    if not i:
+                        i = Interest(name=item)
+                    interests.add(i)
+        else:
+            interests.add(i)
+
+    return list(interests)
+
+
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -82,10 +100,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-
-        interests = []
-        for i in request.form.getlist('aoi'):
-            interests.append(Interest.query.get(i))
+        interests = get_list_from_aoi(request.form.getlist('aoi'))
 
         user = User(name=form.name.data, username=form.username.data,
                     email=form.email.data, password=hashed_password,
@@ -151,9 +166,7 @@ def account():
         if form.password.data:
             hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
             current_user.password = hashed_password
-        interests = []
-        for i in request.form.getlist('aoi'):
-            interests.append(Interest.query.get(i))
+        interests = get_list_from_aoi(request.form.getlist('aoi'))
         current_user.interests = interests
         if form.about_me.data:
             current_user.about_me = form.about_me.data
