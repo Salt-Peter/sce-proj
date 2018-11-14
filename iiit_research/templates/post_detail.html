@@ -23,6 +23,15 @@
             </div>
             <p class="font-weight-light article-content" class="text-justify">{{ post.content }}</p>
 
+            {% if post.file %}
+                <p>
+                    <a href="{{ url_for('static', filename='files/'+ post.file) }}"
+                       target="_blank">
+                        View attached paper
+                    </a>
+                </p>
+            {% endif %}
+
             <p>{{ post.like_count }} likes</p>
 
             <div>
